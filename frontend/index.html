@@ -20,53 +20,58 @@
   </head>
   <body>
     <main>
-    <div class="container">
-    <h2>Coffee Scheduler</h2>
-    <div ng-controller="coffeeController as coffee">
+      <div class="container">
 
-      <!-- Add Coffee -->
-      <form ng-submit="coffee.addCoffee()">
-        <input type="submit" value="Add New Coffee">
-      </form>
+        <!-- Title -->
+        <h2>Coffee Scheduler</h2>
 
-      <!-- List of Added Coffees -->
-      <div ng-repeat="coffeeInstance in coffee.coffees">
-        <hr>
-        <label>Name: </label><input type="text" ng-model="coffeeInstance.name"><br>
-        <label>Type: </label><input type="text" ng-model="coffeeInstance.type"><br>
-        <label>Sugar: </label><input type="text" ng-model="coffeeInstance.sugar"><br>
-        <label>Creamer: </label><input type="text" ng-model="coffeeInstance.creamer"><br>
-        <form ng-submit="coffee.saveCoffee($index)">
-          <input type="submit" value="Save">
-        </form>
-        <form ng-submit="coffee.removeCoffee($index)">
-          <input type="submit" value="Delete">
-        </form>
+        <!-- Angular Controller -->
+        <div ng-controller="coffeeController as coffee">
+
+          <!-- Add Coffee -->
+          <form ng-submit="coffee.addCoffee()">
+            <input type="submit" value="Add New Coffee">
+          </form>
+
+          <!-- List of Added Coffees -->
+          <div ng-repeat="coffeeInstance in coffee.coffees">
+            <hr>
+            <label>Name: </label><input type="text" ng-model="coffeeInstance.name"><br>
+            <label>Type: </label><input type="text" ng-model="coffeeInstance.type"><br>
+            <label>Sugar: </label><input type="text" ng-model="coffeeInstance.sugar"><br>
+            <label>Creamer: </label><input type="text" ng-model="coffeeInstance.creamer"><br>
+            <form ng-submit="coffee.saveCoffee($index)">
+              <input type="submit" value="Save">
+            </form>
+            <form ng-submit="coffee.removeCoffee($index)">
+              <input type="submit" value="Delete">
+            </form>
+          </div>
+
+          <!-- Line Break -->
+          <hr>
+
+          <!-- Add Schedule -->
+          <form ng-submit="coffee.addSchedule()">
+            <input type="submit" value="Add New Schedule">
+          </form>
+
+          <!-- List of Added Schedules -->
+          <div ng-repeat="scheduleInstance in coffee.schedules">
+            <hr>
+            <input type="text" ng-model="scheduleInstance.name">
+            <label>Monday: </label><input type="checkbox" ng-model="todo.done">
+            <label>Tuesday: </label><input type="checkbox" ng-model="todo.done">
+            <label>Wednesday: </label><input type="checkbox" ng-model="todo.done">
+            <label>Thursday: </label><input type="checkbox" ng-model="todo.done">
+            <label>Friday: </label><input type="checkbox" ng-model="todo.done">
+            <label>Saturday: </label><input type="checkbox" ng-model="todo.done">
+            <label>Sunday: </label><input type="checkbox" ng-model="todo.done">
+          </div>
+
+        </div>
+
       </div>
-
-      <!-- Line Break -->
-      <hr>
-
-      <!-- Add Schedule -->
-      <form ng-submit="coffee.addSchedule()">
-        <input type="submit" value="Add New Schedule">
-      </form>
-
-      <!-- List of Added Schedules -->
-      <div ng-repeat="scheduleInstance in coffee.schedules">
-        <hr>
-        <input type="text" ng-model="scheduleInstance.name">
-        <label>Monday: </label><input type="checkbox" ng-model="todo.done">
-        <label>Tuesday: </label><input type="checkbox" ng-model="todo.done">
-        <label>Wednesday: </label><input type="checkbox" ng-model="todo.done">
-        <label>Thursday: </label><input type="checkbox" ng-model="todo.done">
-        <label>Friday: </label><input type="checkbox" ng-model="todo.done">
-        <label>Saturday: </label><input type="checkbox" ng-model="todo.done">
-        <label>Sunday: </label><input type="checkbox" ng-model="todo.done">
-      </div>
-
-    </div>
-    </div>
     </main>
   </body>
 </html>
