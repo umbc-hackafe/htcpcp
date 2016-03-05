@@ -59,14 +59,17 @@
           <!-- List of Added Schedules -->
           <div ng-repeat="scheduleInstance in coffee.schedules">
             <hr>
-            <input type="text" ng-model="scheduleInstance.name">
-            <label>Monday: </label><input type="checkbox" ng-model="todo.done">
-            <label>Tuesday: </label><input type="checkbox" ng-model="todo.done">
-            <label>Wednesday: </label><input type="checkbox" ng-model="todo.done">
-            <label>Thursday: </label><input type="checkbox" ng-model="todo.done">
-            <label>Friday: </label><input type="checkbox" ng-model="todo.done">
-            <label>Saturday: </label><input type="checkbox" ng-model="todo.done">
-            <label>Sunday: </label><input type="checkbox" ng-model="todo.done">
+            <form class="" action="index.html" method="post">
+              <input type="text" ng-model="scheduleInstance.coffee"/>
+              <input type="checkbox" ng-model="scheduleInstance.sunday"/>
+              <input type="checkbox" ng-model="scheduleInstance.monday"/>
+              <input type="checkbox" ng-model="scheduleInstance.tuesday"/>
+              <input type="checkbox" ng-model="scheduleInstance.wednesday"/>
+              <input type="checkbox" ng-model="scheduleInstance.thursday"/>
+              <input type="checkbox" ng-model="scheduleInstance.friday"/>
+              <input type="checkbox" ng-model="scheduleInstance.saturday"/>
+            </form>
+
           </div>
 
         </div>

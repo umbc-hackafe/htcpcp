@@ -30,11 +30,15 @@ angular.module('coffee', []).controller('coffeeController', function () {
 
   coffee.addSchedule = function () {
     // Push into coffees array
-    coffee.coffees.push({
-      name: '',
-      type: '',
-      sugar: '',
-      creamer: ''
+    coffee.schedules.push({
+      coffee: '',
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false
     });
   };
 
