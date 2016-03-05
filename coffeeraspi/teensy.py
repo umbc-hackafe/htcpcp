@@ -20,12 +20,31 @@ class Interface():
     def __enter__(self):
         self.open()
         return self
-    def __exit__(self):
+    def __exit__(self, exception_type, exception_val, exception_tb):
         self.close()
         return False # Don't suppress exceptions
 
     def open(self):
         self.serial.open()
+
+        # Generate functions from the _func_map
+        for name, letter in self._func_map.items():
+            # Construct a function matching this call
+            def call_serial(*args):
+                # Any arguments that are not bytes or lists will be coerced used
+                # bytes([arg])
+                self.serial.write(bytes([0xCA, 0xFE]))
+                self.serial.write(letter)
+                for arg in args:
+                    if type(arg) != bytes and type(args) != list:
+                        arg = bytes([arg])
+                    self.serial.write(arg)
+
+                return self.serial.read()
+
+            # Set the new function so it is accessible as interface.call
+            setattr(self, name, call_serial)
+
     def close(self):
         self.serial.close()
 
