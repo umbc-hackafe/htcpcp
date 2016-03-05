@@ -6,11 +6,23 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/jinzhu/gorm"
+
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-var address = flag.String("address", ":8080", "The address to bind on.")
-var staticFilesPath = flag.String(
-	"static_files_path", "../frontend/", "The static files to use.")
+var (
+	address         = flag.String("address", ":8080", "The address to bind on.")
+	staticFilesPath = flag.String(
+		"static-files-path", "../frontend/", "The static files to use.")
+
+	sqlConnectionString = flag.String(
+		"sql-connect-string", ":memory:",
+		"Connection mode string to use to connect to the datablase")
+	sqlDriver = flag.String("sql-driver", "sqlite3", "Sql driver to use")
+)
 
 var upgrader = websocket.Upgrader{}
 
@@ -43,6 +55,13 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
+
+	db, err := gorm.Open(*sqlDriver, *sqlConnectionString)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	_ = db
 
 	rootRouter := http.NewServeMux()
 	rootRouter.Handle("/", http.FileServer(http.Dir(*staticFilesPath)))
