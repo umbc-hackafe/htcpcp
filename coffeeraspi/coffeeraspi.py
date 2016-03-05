@@ -6,6 +6,8 @@ import json
 import socket
 import websockets
 
+import teensy
+
 async def contact_server():
     async with websockets.connect(server) as sock:
         await sock.send(json.dumps(dict(
