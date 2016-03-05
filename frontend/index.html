@@ -15,16 +15,16 @@
       </form>
 
       <!-- List of Added Coffees -->
-      <div ng-repeat="coffee in coffee.coffees">
+      <div ng-repeat="coffeeInstance in coffee.coffees">
         <hr>
-        <label for="name">Name: </label><input type="text" name="name" ng-model="coffee.name"><br>
-        <label for="name">Type: </label><input type="text" name="type" ng-model="coffee.type"><br>
-        <label for="name">Sugar: </label><input type="text" name="sugar" ng-model="coffee.sugar"><br>
-        <label for="name">Creamer: </label><input type="text" name="creamer" ng-model="coffee.creamer"><br>
-        <form ng-submit="coffee.saveCoffee(coffee)">
+        <label for="name">Name: </label><input type="text" name="name" ng-model="coffeeInstance.name"><br>
+        <label for="name">Type: </label><input type="text" name="type" ng-model="coffeeInstance.type"><br>
+        <label for="name">Sugar: </label><input type="text" name="sugar" ng-model="coffeeInstance.sugar"><br>
+        <label for="name">Creamer: </label><input type="text" name="creamer" ng-model="coffeeInstance.creamer"><br>
+        <form ng-submit="coffee.saveCoffee($index)">
           <input type="submit" value="Save">
         </form>
-        <form ng-submit="coffee.removeCoffee(coffee)">
+        <form ng-submit="coffee.removeCoffee($index)">
           <input type="submit" value="Delete">
         </form>
       </div>

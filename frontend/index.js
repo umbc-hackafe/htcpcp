@@ -15,7 +15,7 @@ angular.module('coffee', []).controller('coffeeController', function () {
     {name: 'Morning Coffee'},
   ];
 
-  // Add a new coffe instance
+  // Add a new coffee instance
   coffee.addCoffee = function () {
     // Push into coffees array
     coffee.coffees.push({
@@ -27,13 +27,13 @@ angular.module('coffee', []).controller('coffeeController', function () {
   };
 
   // Save a coffee instance
-  coffee.saveCoffee = function (item) {
+  coffee.saveCoffee = function (index) {
     // TODO - Write this function
   };
 
   // Remove a coffee instance
-  coffee.removeCoffee = function (item) {
-
+  coffee.removeCoffee = function (index) {
+    coffee.coffees.splice(index, 1);
   };
 
   coffee.addSchedule = function () {
