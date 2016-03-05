@@ -61,7 +61,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	_ = db
+	// Migration stuff could be a utility I guess.
+	db.AutoMigrate(&Schedule{})
+	db.AutoMigrate(&Drink{})
 
 	rootRouter := http.NewServeMux()
 	rootRouter.Handle("/", http.FileServer(http.Dir(*staticFilesPath)))
