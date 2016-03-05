@@ -1,10 +1,17 @@
+// Coffee front end angular module
 angular.module('coffee', []).controller('coffeeController', function () {
 
+  // Coffee application
   var coffee = this;
 
+  // Array of coffee instances
   coffee.coffees = [];
 
+  // Array of schedule instances
   coffee.schedules = [];
+
+  // Sequential schedule instance id
+  coffee.scheduleId = 0;
 
   // Add a new coffee instance
   coffee.addCoffee = function () {
@@ -28,10 +35,15 @@ angular.module('coffee', []).controller('coffeeController', function () {
     coffee.coffees.splice(index, 1);
   };
 
+  // Add a schedule instance
   coffee.addSchedule = function () {
     // Push into coffees array
     coffee.schedules.push({
+      // Coffee instance
       coffee: '',
+      // Sequential schedule instance id
+      id: coffee.scheduleId,
+      // Days of the week check boxes
       sunday: false,
       monday: false,
       tuesday: false,
@@ -40,14 +52,19 @@ angular.module('coffee', []).controller('coffeeController', function () {
       friday: false,
       saturday: false
     });
+    // Increase the schedule id
+    coffee.scheduleId += 1;
   };
 
-  coffee.saveSchedule = function () {
+  // Save a schedule instance
+  coffee.saveSchedule = function (index) {
     // TODO - Write this function
   };
 
-  coffee.removeSchedule = function () {
-
+  // Remove a schedule instance
+  coffee.removeSchedule = function (index) {
+    // Remove the schedule instance from the array
+    coffee.schedules.splice(index, 1);
   };
 
 });

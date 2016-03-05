@@ -58,42 +58,59 @@
 
           <!-- List of Added Schedules -->
           <div ng-repeat="scheduleInstance in coffee.schedules">
+
+            <!-- Line break -->
             <hr>
-            <form class="" action="index.html" method="post">
-              <input type="text" ng-model="scheduleInstance.coffee"/>
-              <p>
-              <input type="checkbox" ng-model="scheduleInstance.sunday" id="sunday.checkbox"/>
-              <label for="sunday.checkbox">sunday</label>
-              </p>
-              <p>
-              <input type="checkbox" ng-model="scheduleInstance.monday" id="monday.checkbox"/>
-              <label for="monday.checkbox">monday</label>
-              </p>
-              <input type="checkbox" ng-model="scheduleInstance.tuesday" id="tuesday.checkbox"/>
-              <label for="tuesday.checkbox">tuesday</label>
-              </p>
-              <p>
-              <input type="checkbox" ng-model="scheduleInstance.wednesday" id="wednesday.checkbox"/>
-              <label for="wednesday.checkbox">wednesday</label>
-              </p>
-              <p>
-              <input type="checkbox" ng-model="scheduleInstance.thursday" id="thursday.checkbox"/>
-              <label for="thursday.checkbox">thursday</label>
-              </p>
-              <p>
-              <input type="checkbox" ng-model="scheduleInstance.friday" id="friday.checkbox"/>
-              <label for="friday.checkbox">friday</label>
-              </p>
-              <p>
-              <input type="checkbox" ng-model="scheduleInstance.saturday" id="saturday.checkbox"/>
-              <label for="saturday.checkbox">saturday</label>
-              </p>
+
+            <!-- Coffee instance to brew -->
+            <input type="text" ng-model="scheduleInstance.coffee"/>
+
+            <!-- Days of the week -->
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.sunday" id="schedule{{scheduleInstance.id}}_sunday"/>
+              <label for="schedule{{scheduleInstance.id}}_sunday">Sunday</label>
+            </span>
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.monday" id="schedule{{scheduleInstance.id}}_monday"/>
+              <label for="schedule{{scheduleInstance.id}}_monday">Monday</label>
+            </span>
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.tuesday" id="schedule{{scheduleInstance.id}}_tuesday"/>
+              <label for="schedule{{scheduleInstance.id}}_tuesday">Tuesday</label>
+            </span>
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.wednesday" id="schedule{{scheduleInstance.id}}_wednesday"/>
+              <label for="schedule{{scheduleInstance.id}}_wednesday">Wednesday</label>
+            </span>
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.thursday" id="schedule{{scheduleInstance.id}}_thursday"/>
+              <label for="schedule{{scheduleInstance.id}}_thursday">Thursday</label>
+            </span>
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.friday" id="schedule{{scheduleInstance.id}}_friday"/>
+              <label for="schedule{{scheduleInstance.id}}_friday">Friday</label>
+            </span>
+            <span>
+              <input type="checkbox" ng-model="scheduleInstance.saturday" id="schedule{{scheduleInstance.id}}_saturday"/>
+              <label for="schedule{{scheduleInstance.id}}_saturday">Saturday</label>
+            </span>
+
+            <!-- Save schedule instance -->
+            <form ng-submit="coffee.saveSchedule($index)">
+              <input type="submit" value="Save">
+            </form>
+
+            <!-- Delete schedule instance -->
+            <form ng-submit="coffee.removeSchedule($index)">
+              <input type="submit" value="Delete">
             </form>
 
           </div>
 
-        </div>
+          <!-- Line break -->
+          <hr>
 
+        </div>
       </div>
     </main>
   </body>
