@@ -5,11 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
 var address = flag.String("address", ":8080", "The address to bind on.")
+var staticFilesPath = flag.String(
+	"static_files_path", "../frontend/", "The static files to use.")
 
 var upgrader = websocket.Upgrader{}
 
@@ -41,9 +42,12 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/ws", wsHandler)
+	flag.Parse()
+
+	rootRouter := http.NewServeMux()
+	rootRouter.Handle("/", http.FileServer(http.Dir(*staticFilesPath)))
+	rootRouter.HandleFunc("/ws", wsHandler)
 
 	log.Printf("Starting on %s\n", *address)
-	log.Fatalln(http.ListenAndServe(*address, r))
+	log.Fatalln(http.ListenAndServe(*address, rootRouter))
 }
