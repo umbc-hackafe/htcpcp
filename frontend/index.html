@@ -16,10 +16,10 @@
       <!-- List of Added Coffees -->
       <div ng-repeat="coffeeInstance in coffee.coffees">
         <hr>
-        <label>Name: </label><input type="text" ng-model="coffeeInstance.name"><br>
-        <label>Type: </label><input type="text" ng-model="coffeeInstance.type"><br>
-        <label>Sugar: </label><input type="text" ng-model="coffeeInstance.sugar"><br>
-        <label>Creamer: </label><input type="text" ng-model="coffeeInstance.creamer"><br>
+        <label>Name of Coffee: </label><input type="text" ng-model="coffeeInstance.name"><br>
+        <label>Type of Coffee: </label><input type="text" ng-model="coffeeInstance.type"><br>
+        <label>Lumps of Sugar: </label><input type="text" ng-model="coffeeInstance.sugar"><br>
+        <label>Globs of Creamer: </label><input type="text" ng-model="coffeeInstance.creamer"><br>
         <form ng-submit="coffee.saveCoffee($index)">
           <input type="submit" value="Save">
         </form>
@@ -45,13 +45,14 @@
         <!-- Coffee instance to brew -->
         <!-- <input type="text" ng-model="scheduleInstance.coffee"/> -->
 
-        <!-- Coffee instances to select -->
         <select ng-model="scheduleInstance.coffee">
-          <!-- Options are all coffee instance names -->
-          <div ng-repeat="coffeeInstance in coffee.coffees">
-            <option value="{{coffeeInstance.name}}">{{coffeeInstance.name}}</option>
-          </div>
+            <option ng-repeat="coffeeInstance in coffee.coffees"
+                    value="{{coffeeInstance.name}}">
+              {{coffeeInstance.name}}
+            </option>
         </select>
+
+        <br>
 
         <!-- Days of the week -->
         <span>
