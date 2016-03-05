@@ -33,11 +33,26 @@ angular.module('coffee', []).controller('coffeeController', function () {
 
   // Remove a coffee instance
   coffee.removeCoffee = function (index) {
+    // Remove the coffe instance from the array
     coffee.coffees.splice(index, 1);
   };
 
   coffee.addSchedule = function () {
-    coffee.schedules.push({name:'Name of Schedule'});
+    // Push into coffees array
+    coffee.coffees.push({
+      name: '',
+      type: '',
+      sugar: '',
+      creamer: ''
+    });
+  };
+
+  coffee.saveSchedule = function () {
+    // TODO - Write this function
+  };
+
+  coffee.removeSchedule = function () {
+
   };
 
 });
