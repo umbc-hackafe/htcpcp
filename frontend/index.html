@@ -63,7 +63,15 @@
             <hr>
 
             <!-- Coffee instance to brew -->
-            <input type="text" ng-model="scheduleInstance.coffee"/>
+            <!-- <input type="text" ng-model="scheduleInstance.coffee"/> -->
+
+            <!-- Coffee instances to select -->
+            <select ng-model="scheduleInstance.coffee">
+              <!-- Options are all coffee instance names -->
+              <div ng-repeat="coffeeInstance in coffee.coffees">
+                <option value="{{coffeeInstance.name}}">{{coffeeInstance.name}}</option>
+              </div>
+            </select>
 
             <!-- Days of the week -->
             <span>

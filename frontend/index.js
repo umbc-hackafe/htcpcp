@@ -17,9 +17,13 @@ angular.module('coffee', []).controller('coffeeController', function () {
   coffee.addCoffee = function () {
     // Push into coffees array
     coffee.coffees.push({
+      // Name of coffee
       name: '',
+      // Type of coffee
       type: '',
+      // Lumps of sugar
       sugar: '',
+      // Globs of creamer
       creamer: ''
     });
   };
