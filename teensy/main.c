@@ -12,17 +12,17 @@
 const int ERR_UNKNOWN = -1;
 const int ERR_NYI = -2;
 
-const int ERR_KCUP_UNKNOWN = -100;
-const int ERR_KCUP_EMPTY = -101;
-const int ERR_KCUP_TRAY_FULL = -102;
-const int ERR_KCUP_TRAY_EMPTY = -103;
+const int ERR_KCUP_UNKNOWN = -10;
+const int ERR_KCUP_EMPTY = -11;
+const int ERR_KCUP_TRAY_FULL = -12;
+const int ERR_KCUP_TRAY_EMPTY = -13;
 
-const int ERR_COFFEE_DRY = -201;
-const int ERR_KETTLE_DRY = -202;
+const int ERR_COFFEE_DRY = -21;
+const int ERR_KETTLE_DRY = -22;
 
-const int ERR_ALREADY_BREWING = -301;
+const int ERR_ALREADY_BREWING = -31;
 
-const int ERR_MUG_INVALID = -401;
+const int ERR_MUG_INVALID = -41;
 
 enum Addin {
   SUGAR,
