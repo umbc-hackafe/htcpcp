@@ -1,5 +1,5 @@
 // Coffee front end angular module
-angular.module('coffee').controller('coffeeController', function () {
+angular.module('coffee', []).controller('coffeeController', function () {
 
   // Coffee application
   var coffee = this;
