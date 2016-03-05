@@ -2,18 +2,9 @@ angular.module('coffee', []).controller('coffeeController', function () {
 
   var coffee = this;
 
-  coffee.coffees = [
-    {
-      name: 'Blueberry Blast',
-      type: 'Blueberry Grind',
-      sugar: '2',
-      creamer: '3'
-    },
-  ];
+  coffee.coffees = [];
 
-  coffee.schedules = [
-    {name: 'Morning Coffee'},
-  ];
+  coffee.schedules = [];
 
   // Add a new coffee instance
   coffee.addCoffee = function () {

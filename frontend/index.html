@@ -32,10 +32,10 @@
       <!-- List of Added Coffees -->
       <div ng-repeat="coffeeInstance in coffee.coffees">
         <hr>
-        <label for="name">Name: </label><input type="text" name="name" ng-model="coffeeInstance.name"><br>
-        <label for="name">Type: </label><input type="text" name="type" ng-model="coffeeInstance.type"><br>
-        <label for="name">Sugar: </label><input type="text" name="sugar" ng-model="coffeeInstance.sugar"><br>
-        <label for="name">Creamer: </label><input type="text" name="creamer" ng-model="coffeeInstance.creamer"><br>
+        <label>Name: </label><input type="text" ng-model="coffeeInstance.name"><br>
+        <label>Type: </label><input type="text" ng-model="coffeeInstance.type"><br>
+        <label>Sugar: </label><input type="text" ng-model="coffeeInstance.sugar"><br>
+        <label>Creamer: </label><input type="text" ng-model="coffeeInstance.creamer"><br>
         <form ng-submit="coffee.saveCoffee($index)">
           <input type="submit" value="Save">
         </form>
@@ -56,6 +56,13 @@
       <div ng-repeat="scheduleInstance in coffee.schedules">
         <hr>
         <input type="text" ng-model="scheduleInstance.name">
+        <label>Monday: </label><input type="checkbox" ng-model="todo.done">
+        <label>Tuesday: </label><input type="checkbox" ng-model="todo.done">
+        <label>Wednesday: </label><input type="checkbox" ng-model="todo.done">
+        <label>Thursday: </label><input type="checkbox" ng-model="todo.done">
+        <label>Friday: </label><input type="checkbox" ng-model="todo.done">
+        <label>Saturday: </label><input type="checkbox" ng-model="todo.done">
+        <label>Sunday: </label><input type="checkbox" ng-model="todo.done">
       </div>
 
     </div>
