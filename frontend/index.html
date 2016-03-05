@@ -1,0 +1,49 @@
+<!doctype html>
+<html ng-app="coffee">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <h2>Coffee Scheduler</h2>
+    <div ng-controller="coffeeController as coffee">
+
+      <!-- Add Coffee -->
+      <form ng-submit="coffee.addCoffee()">
+        <input type="submit" value="Add New Coffee">
+      </form>
+
+      <!-- List of Added Coffees -->
+      <div ng-repeat="coffee in coffee.coffees">
+        <hr>
+        <label for="name">Name: </label><input type="text" name="name" ng-model="coffee.name"><br>
+        <label for="name">Type: </label><input type="text" name="type" ng-model="coffee.type"><br>
+        <label for="name">Sugar: </label><input type="text" name="sugar" ng-model="coffee.sugar"><br>
+        <label for="name">Creamer: </label><input type="text" name="creamer" ng-model="coffee.creamer"><br>
+        <form ng-submit="coffee.saveCoffee(coffee)">
+          <input type="submit" value="Save">
+        </form>
+        <form ng-submit="coffee.removeCoffee(coffee)">
+          <input type="submit" value="Delete">
+        </form>
+      </div>
+
+      <!-- Line Break -->
+      <hr>
+
+      <!-- Add Schedule -->
+      <form ng-submit="coffee.addSchedule()">
+        <input type="submit" value="Add New Schedule">
+      </form>
+
+      <!-- List of Added Schedules -->
+      <div ng-repeat="schedule in coffee.schedules">
+        <div>
+          <input type="text" ng-model="schedule.name">
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
