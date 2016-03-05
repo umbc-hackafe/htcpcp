@@ -16,7 +16,8 @@ async def contact_server():
 
         resp = await sock.recv()
         # Handle new response
-        
+        print(json.loads(resp))
+
 
 def main():
     asyncio.get_event_loop().run_until_complete(contact_server())
