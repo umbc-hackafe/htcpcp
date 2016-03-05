@@ -4,10 +4,10 @@
 
 #define BUFLEN 16
 
-#define PIN_TURNTABLE_SERVO 1
+#define PIN_TURNTABLE_SERVO 3
 #define PIN_KCUP_LOADER 2
-#define PIN_KCUP_EJECTOR 3
-#define PIN_TRAY_PISTON 4
+#define PIN_KCUP_EJECTOR 11
+#define PIN_TRAY_PISTON 12
 
 const int ERR_UNKNOWN = -1;
 const int ERR_NYI = -2;
