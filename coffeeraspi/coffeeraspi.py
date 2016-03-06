@@ -11,10 +11,19 @@ import teensy
 import state
 import messages
 
+import requests
+
 def log(message):
     print('{}: {}'.format(
         datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         message))
+
+# For triggering powered elements on the tea cart
+power_switch = 'http://192.168.1.250/outlet{}?{}'
+special_drinks = {
+        '__bell__': 2,
+        '__light__': 3
+}
 
 async def contact_server(server, name, coffee_queue, reconnect=True):
     while True:
@@ -53,6 +62,24 @@ async def serial_consumer(serial_device_name, coffee_queue, mock=False):
         while True:
             order = await coffee_queue.get()
             log('Preparing order {}'.format(order))
+
+            # Handle special 'drink' commands.
+            if order.name in special_drinks:
+                if order.name == '__bell__':
+                    requests.get(power_switch.format('on',
+                        special_drinks[order.name]),
+                        auth = ('admin','admin'))
+                    await asyncio.sleep(order['add_ins'].get('sugar', 1))
+                    requests.get(power_switch.format('off',
+                        special_drinks[order.name]),
+                        auth = ('admin','admin'))
+                elif order.name == '__light__':
+                    turn_on = order['add_ins'].get('sugar', 0)
+                    requests.get(power_switch.format(
+                        'on' if turn_on else 'off',
+                        special_drinks[order.name]),
+                        auth = ('admin','admin'))
+                return
 
             s.ready_mug()
 
