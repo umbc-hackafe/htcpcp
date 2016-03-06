@@ -87,6 +87,9 @@ func main() {
 	apiRouter.Methods("POST").
 		Path("/create/schedule").
 		HandlerFunc(createSchedule)
+	apiRouter.Methods("POST").
+		Path("/create/schedule").
+		HandlerFunc(createDrink)
 
 	rootRouter.Handle("/api/", apiRouter)
 

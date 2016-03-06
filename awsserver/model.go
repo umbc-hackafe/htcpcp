@@ -33,10 +33,13 @@ type Schedule struct {
 }
 
 type Drink struct {
-	ID          uint   `gorm:"primary_key"`
-	Name        string `sql:"not null,type:varchar(100)"`
-	Description string `sql:"type:varcahr(2048)"`
-	Size        int    `sql:"not null"`
+	ID          uint   `gorm:"primary_key",json:"id"`
+	Name        string `sql:"not null,type:varchar(100)",json:"name"`
+	Size        uint8    `sql:"not null",json:"size"`
+	Sugar uint8 `sql:"not null",json:"sugar"`
+	Creamer uint8 `sql:"not null",json:"creamer"`
+	TeaBag string `sql:"not null,type:varchar(100)",json:"tea_bag"`
+	KCup string `sql:"not null,typ:varchar(100)",json:"k_cup"`
 }
 
 type Machine struct {

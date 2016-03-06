@@ -95,7 +95,7 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	schedule := Schedule{
-		Name:      data.Name,
+		Name:      data.Name[:100],
 		Days:      days,
 		Enabled:   data.Enabled,
 		Time:      tsec,
@@ -107,6 +107,47 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 
 	enc := json.NewEncoder(w)
 	err = enc.Encode(schedule)
+	if err != nil {
+		log.Printf("Error while encoding: %v", err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+}
+
+type DrinkCreateRequest struct {
+	Name string `json:"name"`
+	Size uint8 `json:"size"`
+	Sugar uint8 `json:"sugar"`
+	Creamer uint8 `json:"creamer"`
+	TeaBag string `json:"tea_bag"`
+	KCup string `json:"k_cup"`
+}
+
+func createDrink(w http.ResponseWriter, r *http.Request) {
+	d := json.NewDecoder(io.LimitReader(r.Body, int64(*maximumRequestSize)))
+
+	data := DrinkCreateRequest{}
+
+	err := d.Decode(&data)
+	if err != nil {
+		log.Printf("Error decoding request: %v\n", err)
+		http.Error(w, "Unable to decode request", http.StatusBadRequest)
+		return
+	}
+
+	drink := Drink{
+		Name: data.Name[:100],
+		Size: data.Size,
+		Sugar: data.Sugar,
+		Creamer: data.Creamer,
+		TeaBag: data.TeaBag[:100],
+		KCup: data.KCup[:100],
+	}
+
+	db.Create(&drink)
+
+	enc := json.NewEncoder(w)
+	err = enc.Encode(drink)
 	if err != nil {
 		log.Printf("Error while encoding: %v", err)
 		return
