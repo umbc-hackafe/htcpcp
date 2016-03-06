@@ -60,7 +60,7 @@ def coffee(request):
     if sugars == "?":
         return request.response(end=False, speech="You want how much sugar!?")
 
-    threading.Thread(target=do_brew).start()
+    threading.Thread(target=do_brew, args=(drink, creams, sugars)).start()
 
     return request.response(end=True, speech="Okay! One {} coming right up!".format(drink))
 
