@@ -111,6 +111,33 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+func getSchedules(w http.ResponseWriter, r *http.Request) {
+	schedules := []Schedule{}
+	db.Find(&schedules)
+
+	sch := make([]ScheduleCreateRequest, len(schedules))
+	for i, schedule := range schedules {
+		sch[i].ID = schedule.ID
+		sch[i].Name = schedule.Name
+		sch[i].Days = bitvectorToDays(schedule.Days)
+		sch[i].Enabled = schedule.Enabled
+		sch[i].Time = schedule.Time
+		sch[i].Drink = schedule.DrinkID
+		sch[i].Machine = schedule.MachineID
+	}
+	wrap := map[string]interface{}{
+		"schedules": sch,
+	}
+
+	enc := json.NewEncoder(w)
+	err := enc.Encode(wrap)
+	if err != nil {
+		log.Printf("Error while encoding: %v", err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+}
+
 type DrinkCreateRequest struct {
 	ID      uint   `json:"id"`
 	Name    string `json:"name"`
@@ -155,6 +182,51 @@ func createDrink(w http.ResponseWriter, r *http.Request) {
 
 	enc := json.NewEncoder(w)
 	err = enc.Encode(data)
+	if err != nil {
+		log.Printf("Error while encoding: %v", err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func getDrinks(w http.ResponseWriter, r *http.Request) {
+	drinks := []Drink{}
+	db.Find(&drinks)
+
+	dri := make([]DrinkCreateRequest, len(drinks))
+	for i, drink := range drinks {
+		dri[i].ID = drink.ID
+		dri[i].Name = drink.Name
+		dri[i].Size = drink.Size
+		dri[i].Sugar = drink.Sugar
+		dri[i].Creamer = drink.Creamer
+		dri[i].TeaBag = drink.TeaBag
+		dri[i].KCup = drink.KCup
+	}
+
+	wrap := map[string]interface{}{
+		"drinks": dri,
+	}
+
+	enc := json.NewEncoder(w)
+	err := enc.Encode(wrap)
+	if err != nil {
+		log.Printf("Error while encoding: %v", err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func getMachines(w http.ResponseWriter, r *http.Request) {
+	machines := []Machine{}
+	db.Find(&machines)
+
+	wrap := map[string]interface{}{
+		"machines": machines,
+	}
+
+	enc := json.NewEncoder(w)
+	err := enc.Encode(wrap)
 	if err != nil {
 		log.Printf("Error while encoding: %v", err)
 		return

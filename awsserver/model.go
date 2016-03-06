@@ -53,6 +53,6 @@ type Drink struct {
 }
 
 type Machine struct {
-	ID   uint   `gorm:"primary_key"`
-	Name string `sql:"not null,type:varchar(100)"`
+	ID   uint   `gorm:"primary_key",json:"id"`
+	Name string `sql:"not null,type:varchar(100)",json:"name"`
 }

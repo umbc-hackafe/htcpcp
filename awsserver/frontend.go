@@ -23,6 +23,10 @@ var (
 		"sql-connect-string", ":memory:",
 		"Connection mode string to use to connect to the datablase")
 	sqlDriver = flag.String("sql-driver", "sqlite3", "Sql driver to use")
+
+	createDummyMachine = flag.Bool(
+		"create-dummy", false,
+		"Whether to create a dummy machine for the frontend to access.")
 )
 
 var (
@@ -88,6 +92,14 @@ func main() {
 	db.AutoMigrate(&Drink{})
 	db.AutoMigrate(&Machine{})
 
+	if *createDummyMachine {
+		m := Machine{Name: "Dummy"}
+		db.Create(&m)
+		log.Printf(
+			"Created dummy machine with id %d and name %s",
+			m.ID, m.Name)
+	}
+
 	// Create the base router
 	rootRouter := http.NewServeMux()
 	// Serve the static files (js, html, css)
@@ -98,11 +110,15 @@ func main() {
 	// Sub-router for the REST api
 	apiRouter := mux.NewRouter()
 	apiRouter.Methods("POST").
-		Path("/update/schedule").
+		Path("/api/update/schedule").
 		HandlerFunc(createSchedule)
 	apiRouter.Methods("POST").
-		Path("/update/drink").
+		Path("/api/update/drink").
 		HandlerFunc(createDrink)
+
+	apiRouter.HandleFunc("/api/get/schedules", getSchedules)
+	apiRouter.HandleFunc("/api/get/drinks", getDrinks)
+	apiRouter.HandleFunc("/api/get/machines", getMachines)
 
 	rootRouter.Handle("/api/", apiRouter)
 
