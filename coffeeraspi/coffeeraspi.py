@@ -7,6 +7,7 @@ import socket
 import websockets
 
 import teensy
+import messages
 
 async def contact_server():
     async with websockets.connect(server) as sock:
