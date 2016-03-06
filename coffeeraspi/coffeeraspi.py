@@ -17,25 +17,29 @@ def log(message):
 
 async def contact_server(server, name, coffee_queue, reconnect=True):
     while True:
-        async with websockets.connect(server) as sock:
-            await sock.send(json.dumps(dict(
-                message='Hello',
-                name=name,
-                id=None, # In theory we would provide a unique ID for each machine, but we only have one...
-                )))
+        try:
+            async with websockets.connect('ws://' + server + '/ws') as sock:
+                await sock.send(json.dumps(dict(
+                    message='Hello',
+                    name=name,
+                    id=None, # In theory we would provide a unique ID for each machine, but we only have one...
+                    )))
 
-            resp = await sock.recv()
-            log(json.loads(resp))
-            log('Connected with server {}'.format(server))
+                resp = await sock.recv()
+                log(json.loads(resp))
+                log('Connected with server {}'.format(server))
 
-            while True:
-                # Wait for orders.
-                order_msg = json.loads(await sock.recv())
-                order = messages.DrinkOrder.deserialize(order_msg)
-                coffee_queue.put_nowait(order)
-                log('Enqueued order {}'.format(order))
+                while True:
+                    # Wait for orders.
+                    order_msg = json.loads(await sock.recv())
+                    order = messages.DrinkOrder.deserialize(order_msg)
+                    coffee_queue.put_nowait(order)
+                    log('Enqueued order {}'.format(order))
+        except (OSError, websockets.exceptions.ConnectionClosed) as e:
+            log('Error connecting to server: {}'.format(e))
 
-        log('Lost connection with server')
+        log('Lost connection with server, retrying in 5')
+        await asyncio.sleep(5)
         if not reconnect:
             return
 
@@ -43,8 +47,7 @@ async def serial_consumer(serial_device_name, coffee_queue, mock=False):
     with teensy.Interface(serial_device_name, mock=mock) as interface:
         while True:
             order = await coffee_queue.get()
-
-            # TODO: Process order...
+            log('Preparing order {}'.format(order))
 
 def main(args):
     loop = asyncio.get_event_loop()
