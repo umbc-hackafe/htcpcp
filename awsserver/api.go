@@ -84,6 +84,7 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 
 	schedule := Schedule{}
 	db.First(&schedule, data.ID)
+	new := schedule.ID == 0
 
 	schedule.Name = data.Name[:100]
 	schedule.Days = days
@@ -93,6 +94,12 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 	schedule.MachineID = data.Machine
 
 	db.Save(&schedule)
+	if new {
+		log.Printf(
+			"Created new schedule with id %d and name %s", schedule.ID, schedule.Name)
+	} else {
+		log.Printf("Updated schedule %d (name: %s)", schedule.ID, schedule.Name)
+	}
 
 	data.ID = schedule.ID
 	data.Name = schedule.Name
@@ -136,6 +143,7 @@ func getSchedules(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
+	log.Printf("Got %d schedules.", len(schedules))
 }
 
 type DrinkCreateRequest struct {
@@ -162,6 +170,7 @@ func createDrink(w http.ResponseWriter, r *http.Request) {
 
 	drink := Drink{}
 	db.First(&drink, data.ID)
+	new := drink.ID == 0
 
 	drink.Name = data.Name[:100]
 	drink.Size = data.Size
@@ -171,6 +180,11 @@ func createDrink(w http.ResponseWriter, r *http.Request) {
 	drink.KCup = data.KCup[:100]
 
 	db.Save(&drink)
+	if new {
+		log.Printf("Created a new drink with ID %d and name %s\n", drink.ID, drink.Name)
+	} else {
+		log.Printf("Updated drink %d (name %s)\n", drink.ID, drink.Name)
+	}
 
 	data.ID = drink.ID
 	data.Name = drink.Name
@@ -215,6 +229,8 @@ func getDrinks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
+
+	log.Printf("Got %d drinks.\n", len(drinks))
 }
 
 func getMachines(w http.ResponseWriter, r *http.Request) {
@@ -232,4 +248,6 @@ func getMachines(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
+
+	log.Printf("Got %d machines.\n", len(machines))
 }
