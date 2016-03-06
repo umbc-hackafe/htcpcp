@@ -21,6 +21,7 @@ skill = pyalexa.Skill(app_id=APP_ID)
 my_drink_id = -1
 
 def do_brew(drink, creams=0, sugar=0):
+    global my_drink_id
     data = {
         "size": 6,
         "k_cup": "yes please" if drink == "coffee" else "",
