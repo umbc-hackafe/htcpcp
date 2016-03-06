@@ -39,21 +39,6 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
   // Add a schedule instance
   coffee.addSchedule = function () {
 
-    // Post request to create new coffee object
-    $http.post('/api/create/schedule', {
-      name: coffee.schedules[index].name,
-      days: daysArr,
-      time: formatAMPM(coffee.schedules[index].time),
-      drink: -1,
-      machine: -1,
-    }).then(function () {
-      // TODO - Success
-      console.log('Success');
-    }, function () {
-      // TODO - FAILURE
-      console.log('Failure');
-    });
-
     // Push into coffees array
     coffee.schedules.push({
       // Schedule name
@@ -71,6 +56,24 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       friday: false,
       saturday: false
     });
+
+    var index = coffee.schedules.length - 1;
+
+    // Post request to create new coffee object
+    $http.post('/api/create/schedule', {
+      name: '',
+      days: [],
+      time: '',
+      drink: 0,
+      machine: 0,
+    }).then(function () {
+      // TODO - Success
+      console.log('Success');
+    }, function () {
+      // TODO - FAILURE
+      console.log('Failure');
+    });
+
   };
 
   // Save a schedule instance
@@ -99,7 +102,7 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
     console.log({
       name: coffee.schedules[index].name,
       days: daysArr,
-      time: formatAMPM(coffee.schedules[index].time)
+      time: Math.floor(coffee.schedules[index].time.getTime() / 1000)
     });
   };
 
