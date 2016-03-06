@@ -1,0 +1,11 @@
+[Unit]
+Description=Serve htcpcp web service
+Wants=network.target
+After=network.target
+
+[Service]
+#ExecStartPre=/bin/sh -c "cd /opt/htcpcp; git pull"
+ExecStart=/opt/htcpcp/awsserver/awsserver -address=:80
+
+[Install]
+WantedBy=default.target
