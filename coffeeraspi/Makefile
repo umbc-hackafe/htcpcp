@@ -8,4 +8,4 @@ requirements: env requirements.txt
 
 install-service: htcpcp.service
 	install -D htcpcp.service $(HOME)/.config/systemd/user/htcpcp.service
-	sytemctl daemon-reload --user
+	systemctl daemon-reload --user
