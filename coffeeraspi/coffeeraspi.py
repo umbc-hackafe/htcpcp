@@ -21,8 +21,7 @@ async def contact_server(server, name, coffee_queue, reconnect=True):
             async with websockets.connect('ws://' + server + '/ws') as sock:
                 await sock.send(json.dumps(dict(
                     message='Hello',
-                    name=name,
-                    id=None, # In theory we would provide a unique ID for each machine, but we only have one...
+                    name=name
                     )))
 
                 resp = await sock.recv()
