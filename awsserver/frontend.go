@@ -85,10 +85,10 @@ func main() {
 	// Sub-router for the REST api
 	apiRouter := mux.NewRouter()
 	apiRouter.Methods("POST").
-		Path("/create/schedule").
+		Path("/update/schedule").
 		HandlerFunc(createSchedule)
 	apiRouter.Methods("POST").
-		Path("/create/schedule").
+		Path("/update/drink").
 		HandlerFunc(createDrink)
 
 	rootRouter.Handle("/api/", apiRouter)

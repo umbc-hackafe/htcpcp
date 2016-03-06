@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 var maximumRequestSize = flag.Int(
@@ -29,10 +28,21 @@ func daysToBitvector(days []string) (uint8, error) {
 	return m, nil
 }
 
+func bitvectorToDays(days uint8) []string {
+	d := []string{}
+	for i := uint(0); i < 7; i += 1 {
+		if (days & (1 << i)) != 0 {
+			d = append(d, DaysReverseMap[1<<i])
+		}
+	}
+	return d
+}
+
 type ScheduleCreateRequest struct {
+	ID      uint     `json:"id"`
 	Name    string   `json:"name"`
 	Days    []string `json:"days"`
-	Time    string   `json:"time"`
+	Time    int      `json:"time"`
 	Enabled bool     `json:"bool"`
 	Drink   uint     `json:"drink"`
 	Machine uint     `json:"machine"`
@@ -50,6 +60,7 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Convert the days list to the bit vector
 	days, err := daysToBitvector(data.Days)
 	if err != nil {
 		log.Println(err)
@@ -57,56 +68,42 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, err := time.Parse("3:04 PM", strings.ToUpper(data.Time))
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "Unable to parse time.", http.StatusBadRequest)
-		return
-	}
-	from := time.Date(0, time.January, 0, 0, 0, 0, 0, time.UTC)
-	tsec := int(t.Sub(from).Seconds())
-
-	var drinks []Drink
-	db.Where(&Drink{ID: data.Drink}).Find(&drinks)
-	if len(drinks) != 1 {
-		if len(drinks) < 1 {
-			log.Printf("No drinks found with id %d\n", data.Drink)
-			http.Error(
-				w, fmt.Sprintf("No drinks found with id %d", data.Drink),
-				http.StatusBadRequest)
-		} else {
-			log.Panicf("More than one drink with id %d!\n", data.Drink)
-		}
-		return
+	if data.Time < 0 {
+		data.Time = 0
+	} else if data.Time > 24*60*60 {
+		data.Time = 24 * 60 * 60
 	}
 
-	var machines []Machine
-	db.Where(&Machine{ID: data.Machine}).Find(&machines)
-	if len(machines) != 1 {
-		if len(machines) < 1 {
-			log.Printf("No machines found with id %d\n", data.Machine)
-			http.Error(
-				w, fmt.Sprintf("No machines found with id %d", data.Machine),
-				http.StatusBadRequest)
-		} else {
-			log.Panicf("More than one machine with id %d!\n", data.Machine)
-		}
-		return
-	}
+	drink := Drink{}
+	db.First(&drink, data.Drink)
+	data.Drink = drink.ID // 0 if missing, otherwise data.Drink
 
-	schedule := Schedule{
-		Name:      data.Name[:100],
-		Days:      days,
-		Enabled:   data.Enabled,
-		Time:      tsec,
-		DrinkID:   data.Drink,
-		MachineID: data.Machine,
-	}
+	machine := Machine{}
+	db.First(&machine, data.Machine)
+	data.Machine = machine.ID // 0 if missing, otherwise data.Machine
 
-	db.Create(&schedule)
+	schedule := Schedule{}
+	db.First(&schedule, data.ID)
+
+	schedule.Name = data.Name[:100]
+	schedule.Days = days
+	schedule.Enabled = data.Enabled
+	schedule.Time = data.Time
+	schedule.DrinkID = data.Drink
+	schedule.MachineID = data.Machine
+
+	db.Save(&schedule)
+
+	data.ID = schedule.ID
+	data.Name = schedule.Name
+	data.Days = bitvectorToDays(schedule.Days)
+	data.Enabled = schedule.Enabled
+	data.Time = schedule.Time
+	data.Drink = schedule.DrinkID
+	data.Machine = schedule.MachineID
 
 	enc := json.NewEncoder(w)
-	err = enc.Encode(schedule)
+	err = enc.Encode(data)
 	if err != nil {
 		log.Printf("Error while encoding: %v", err)
 		return
@@ -115,12 +112,13 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 }
 
 type DrinkCreateRequest struct {
-	Name string `json:"name"`
-	Size uint8 `json:"size"`
-	Sugar uint8 `json:"sugar"`
-	Creamer uint8 `json:"creamer"`
-	TeaBag string `json:"tea_bag"`
-	KCup string `json:"k_cup"`
+	ID      uint   `json:"id"`
+	Name    string `json:"name"`
+	Size    uint8  `json:"size"`
+	Sugar   uint8  `json:"sugar"`
+	Creamer uint8  `json:"creamer"`
+	TeaBag  string `json:"tea_bag"`
+	KCup    string `json:"k_cup"`
 }
 
 func createDrink(w http.ResponseWriter, r *http.Request) {
@@ -135,19 +133,28 @@ func createDrink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	drink := Drink{
-		Name: data.Name[:100],
-		Size: data.Size,
-		Sugar: data.Sugar,
-		Creamer: data.Creamer,
-		TeaBag: data.TeaBag[:100],
-		KCup: data.KCup[:100],
-	}
+	drink := Drink{}
+	db.First(&drink, data.ID)
 
-	db.Create(&drink)
+	drink.Name = data.Name[:100]
+	drink.Size = data.Size
+	drink.Sugar = data.Sugar
+	drink.Creamer = data.Creamer
+	drink.TeaBag = data.TeaBag[:100]
+	drink.KCup = data.KCup[:100]
+
+	db.Save(&drink)
+
+	data.ID = drink.ID
+	data.Name = drink.Name
+	data.Size = drink.Size
+	data.Sugar = drink.Sugar
+	data.Creamer = drink.Creamer
+	data.TeaBag = drink.TeaBag
+	data.KCup = drink.KCup
 
 	enc := json.NewEncoder(w)
-	err = enc.Encode(drink)
+	err = enc.Encode(data)
 	if err != nil {
 		log.Printf("Error while encoding: %v", err)
 		return

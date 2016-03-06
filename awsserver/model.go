@@ -20,30 +20,39 @@ var DaysMap = map[string]uint8{
 	"SATURDAY":  SATURDAY,
 }
 
+var DaysReverseMap = map[uint8]string{
+	SUNDAY:    "SUNDAY",
+	MONDAY:    "MONDAY",
+	TUESDAY:   "TUESDAY",
+	WEDNESDAY: "WEDNESDAY",
+	THURSDAY:  "THURSDAY",
+	FRIDAY:    "FRIDAY",
+	SATURDAY:  "SATURDAY",
+}
+
 type Schedule struct {
-	ID        uint    `gorm:"primary_key",json:"id"`
-	Name      string  `sql:"not null,type:varchar(100)",json:"name"`
-	Days      uint8   `sql:"not null",json:"days"`
-	Enabled   bool    `sql:"not null",json:"enabled"`
-	Time      int     `sql:"not null",json:"time"`
-	DrinkID   uint    `json:"drink_id"`
-	Drink     Drink   `sql:"not null",json:"-"`
-	MachineID uint    `json:"machine_id"`
-	Machine   Machine `sql:"not null",json:"-"`
+	ID        uint   `gorm:"primary_key"`
+	Name      string `sql:"not null,type:varchar(100)"`
+	Days      uint8  `sql:"not null"`
+	Enabled   bool   `sql:"not null"`
+	Time      int    `sql:"not null"`
+	DrinkID   uint
+	Drink     Drink
+	MachineID uint
+	Machine   Machine
 }
 
 type Drink struct {
-	ID          uint   `gorm:"primary_key",json:"id"`
-	Name        string `sql:"not null,type:varchar(100)",json:"name"`
-	Size        uint8    `sql:"not null",json:"size"`
-	Sugar uint8 `sql:"not null",json:"sugar"`
-	Creamer uint8 `sql:"not null",json:"creamer"`
-	TeaBag string `sql:"not null,type:varchar(100)",json:"tea_bag"`
-	KCup string `sql:"not null,typ:varchar(100)",json:"k_cup"`
+	ID      uint   `gorm:"primary_key"`
+	Name    string `sql:"not null,type:varchar(100)"`
+	Size    uint8  `sql:"not null"`
+	Sugar   uint8  `sql:"not null"`
+	Creamer uint8  `sql:"not null"`
+	TeaBag  string `sql:"not null,type:varchar(100)"`
+	KCup    string `sql:"not null,typ:varchar(100)"`
 }
 
 type Machine struct {
-	ID        uint   `gorm:"primary_key"`
-	Name      string `sql:"not null,type:varchar(100)"`
-	Connected bool   `sql:"not null"`
+	ID   uint   `gorm:"primary_key"`
+	Name string `sql:"not null,type:varchar(100)"`
 }
