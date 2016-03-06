@@ -26,18 +26,16 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
     });
 
     /**
-    * NOTE - Create Schedule
+    * NOTE - Create Coffee
     */
 
     // New index for coffee instance is last index
     var index = coffee.coffees.length - 1;
 
     // Post request to create new coffee object
-    $http.post('/api/update/drink', {
+    $http.post('/api/create/drink', {
       // Empty name
       name: '',
-      // Empty days
-      type: '',
       // Size
       size: 6,
       // Kcup string for yes, empty string for no.
@@ -45,7 +43,9 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       // Empty intial sugar and creamer.
       sugar: 0,
       creamer: 0,
-    }).then(function (response) { // Success callback
+      // Teabag
+      tea_bag: '',
+  }).then(function (response) { // Success callback
       // Set the coffee item id
       coffee.schedules[index].id = response.data.id;
     }, function (response) { // Failure callback
@@ -103,6 +103,8 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       days: [],
       // Empty time
       time: '',
+      // Enabled flag
+      enabled: true,
       // 0 for drink id
       drink: 0,
       // 0 for machine id
@@ -145,6 +147,8 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       days: daysArr,
       // Empty time
       time: Math.floor(coffee.schedules[index].time.getTime() / 1000),
+      // Enabled flag
+      enabled: true,
       // 0 for drink id
       drink: 0,
       // 0 for machine id
