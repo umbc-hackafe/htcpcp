@@ -319,8 +319,8 @@ func enqueueBrew(req *BrewRequest, w http.ResponseWriter) {
 	}
 
 	activeBackendMapLock.RLock()
+	defer activeBackendMapLock.RUnlock()
 	backend, ok := activeBackendMap[machine.ID]
-	activeBackendMapLock.RUnlock()
 
 	if !ok {
 		log.Printf(

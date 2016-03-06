@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -33,54 +32,7 @@ var (
 var (
 	upgrader = websocket.Upgrader{}
 	db       gorm.DB
-
-	activeBackendMap     = make(map[uint]chan<- *Drink)
-	activeBackendMapLock = sync.RWMutex{}
 )
-
-func wsHandler(w http.ResponseWriter, r *http.Request) {
-	// Upgrade the http connection to a websocket
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Printf("Unable to upgrade connection: %v\n", err)
-		http.Error(w, "Connection failed.", http.StatusInternalServerError)
-		return
-	}
-	// If successful, set to close after returning
-	defer conn.Close()
-
-	// Test Code
-	data := make(map[string]interface{})
-	err = conn.ReadJSON(&data)
-	if err != nil {
-		log.Printf("Error decoding json: %v\n", err)
-		return
-	}
-
-	log.Printf("Got data: %s", data)
-
-	// Give our end of the handshake
-	data = make(map[string]interface{})
-	data["status"] = "successful"
-	err = conn.WriteJSON(data)
-	if err != nil {
-		log.Printf("Error writing to connection: %v\n", err)
-		return
-	}
-
-	data = make(map[string]interface{})
-	data["mug_size"] = 8
-	data["add_ins"] = make(map[string]interface{})
-	data["name"] = "coffelattachino"
-	err = conn.WriteJSON(data)
-	if err != nil {
-		log.Printf("Error writing to connection: %v\n", err)
-		return
-	}
-
-	for {
-	}
-}
 
 func main() {
 	flag.Parse()

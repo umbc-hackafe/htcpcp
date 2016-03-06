@@ -37,9 +37,7 @@ type Schedule struct {
 	Enabled   bool   `sql:"not null"`
 	Time      int    `sql:"not null"`
 	DrinkID   uint
-	Drink     Drink
 	MachineID uint
-	Machine   Machine
 }
 
 type Drink struct {
@@ -50,9 +48,11 @@ type Drink struct {
 	Creamer uint8  `sql:"not null"`
 	TeaBag  string `sql:"not null,type:varchar(100)"`
 	KCup    string `sql:"not null,typ:varchar(100)"`
+	Schedules []Schedule
 }
 
 type Machine struct {
 	ID   uint   `gorm:"primary_key",json:"id"`
 	Name string `sql:"not null,type:varchar(100)",json:"name"`
+	Schedules []Schedule `json:"-"`
 }
