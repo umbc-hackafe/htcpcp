@@ -12,6 +12,7 @@
     <div ng-controller="coffeeController as coffee">
 
       <div layout="row" layout-align="space-around none">
+
         <div>
           <div layout="row" layout-align="center center">
             <!-- Add Coffee -->
@@ -31,6 +32,9 @@
             <div layout="row" layout-align="center center">
               <form class="save-button" ng-submit="coffee.saveCoffee($index)">
                 <md-button class="md-raised md-primary" type="submit">Save</md-button>
+              </form>
+              <form class="brew-button" ng-submit="coffee.brewCoffee($index)">
+                <md-button class="md-raised md-primary" type="submit">Brew Now</md-button>
               </form>
               <form class="delete-button" ng-submit="coffee.removeCoffee($index)">
                 <md-button class="md-raised md-warn" type="submit">Delete</md-button>
@@ -54,10 +58,10 @@
               <md-input-container>
                 <label>Coffee Name</label>
                 <!-- Dynamically List all Coffee Instances -->
-                <md-select ng-model="scheduleInstance.coffee" ng-options="coffeeInstance as coffeeInstance.name for coffeeInstance in coffee.coffees">
-                  <md-option ng-repeat="coffeeInstance in coffee.coffees" value="{{coffeeInstance.name}}">
-                    {{coffeeInstance.name}}
-                  </md-option>
+                <md-select ng-model="scheduleInstance.coffee">
+                    <md-option ng-repeat="coffeeInstance in coffee.coffees" value="{{coffeeInstance.name}}">
+                      {{coffeeInstance.name}}
+                    </md-option>
                 </md-select>
               </md-input-container>
             </div>
@@ -86,6 +90,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
 
