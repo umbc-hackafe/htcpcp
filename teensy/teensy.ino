@@ -45,8 +45,8 @@ long serial_index = 0;
 
 int arglen[256] = {};
 
-#define TRAY_OPEN 1
-#define TRAY_CLOSED 0
+#define TRAY_OPEN 0
+#define TRAY_CLOSED 1
 
 #define LOADER_REST 1
 #define LOADER_ACTIVE 0
@@ -67,6 +67,7 @@ void handle_serial() {
   if (Serial.available()) {
     int data = Serial.read();
     if (data == CMD_HEADER_A) {
+      Serial.print("CA");
       serial_index = 0;
     } else {
       serial_buffer[serial_index++] = data;
@@ -74,20 +75,24 @@ void handle_serial() {
   }
 
   if (serial_buffer[0] == CMD_HEADER_B && serial_index > 1) {
+    Serial.print("FE");
     if (serial_index > 1 + arglen[serial_buffer[1]]) {
       int res;
       switch (serial_buffer[1]) {
       case CMD_mug_seek:
 	// int
+  Serial.print("mug seek");
 	res = mug_seek(serial_buffer[2]);
 	break;
       case CMD_mug_get:
 	res = mug_get();
 	break;
       case CMD_kcup_tray_open:
+  Serial.print("tray open");
 	res = kcup_tray_open();
 	break;
       case CMD_kcup_tray_close:
+  Serial.print("tray close");
 	res = kcup_tray_close();
 	break;
       case CMD_kcup_load:
@@ -157,7 +162,7 @@ int kcup_tray_open() {
 int kcup_tray_close() {
   digitalWriteFast(PIN_TRAY_PISTON, TRAY_CLOSED);
   if (tray_state != TRAY_CLOSED) {
-    delay(500);
+    delay(3000);
   }
   tray_state = TRAY_CLOSED;
   return 0;
@@ -168,15 +173,15 @@ int kcup_tray_close() {
 // Opens the tray if it is closed
 int kcup_load() {
   if (kcup_loaded) {
-    return ERR_KCUP_TRAY_FULL;
+    kcup_eject();
   }
 
   kcup_tray_open();
 
   digitalWriteFast(PIN_KCUP_LOADER, LOADER_ACTIVE);
-  delay(500);
+  delay(1000);
   digitalWriteFast(PIN_KCUP_LOADER, LOADER_REST);
-  delay(500);
+  delay(1000);
 
   kcup_loaded = 1;
 
@@ -244,7 +249,7 @@ void initialize() {
   digitalWriteFast(PIN_KCUP_LOADER, LOADER_REST);
   digitalWriteFast(PIN_KCUP_EJECTOR, EJECTOR_OFF);
   digitalWriteFast(PIN_TRAY_PISTON, TRAY_CLOSED);
-  digitalWriteFast(PIN_BREW_BUTTON, 1);
+  digitalWriteFast(PIN_BREW_BUTTON, 0);
 
   Serial.begin(9600);
 
@@ -257,6 +262,8 @@ void initialize() {
   arglen[CMD_kcup_count] = 0;
   arglen[CMD_brew] = 0;
   arglen[CMD_addin_insert] = 2;
+
+  mug_seek(0);
 }
 
 int main() {
