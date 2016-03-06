@@ -10,9 +10,6 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
   // Array of schedule instances
   coffee.schedules = [];
 
-  // Sequential schedule instance id
-  coffee.scheduleId = 0;
-
   // Add a new coffee instance
   coffee.addCoffee = function () {
     // Push into coffees array
@@ -41,23 +38,30 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
 
   // Add a schedule instance
   coffee.addSchedule = function () {
-    // // Post request to create new coffee object
-    // $http.post('/api/create/schedule', {
-    //   // Data object to send
-    //   foo: 'bar'
-    // }).then(function () {
-    //   // TODO - Success
-    //   console.log('Success');
-    // }, function () {
-    //   // TODO - FAILURE
-    //   console.log('Failure');
-    // });
+
+    // Post request to create new coffee object
+    $http.post('/api/create/schedule', {
+      name: coffee.schedules[index].name,
+      days: daysArr,
+      time: formatAMPM(coffee.schedules[index].time),
+      drink: -1,
+      machine: -1,
+    }).then(function () {
+      // TODO - Success
+      console.log('Success');
+    }, function () {
+      // TODO - FAILURE
+      console.log('Failure');
+    });
+
     // Push into coffees array
     coffee.schedules.push({
+      // Schedule name
+      name: '',
       // Coffee instance
       coffee: '',
-      // Sequential schedule instance id
-      id: coffee.scheduleId,
+      // Time string
+      time: '',
       // Days of the week check boxes
       sunday: false,
       monday: false,
@@ -67,13 +71,36 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       friday: false,
       saturday: false
     });
-    // Increase the schedule id
-    coffee.scheduleId += 1;
   };
 
   // Save a schedule instance
   coffee.saveSchedule = function (index) {
-    // TODO - Write this function
+
+    var daysArr = [];
+    if (coffee.schedules[index].sunday) daysArr.push('sunday');
+    if (coffee.schedules[index].monday) daysArr.push('monday');
+    if (coffee.schedules[index].tuesday) daysArr.push('tuesday');
+    if (coffee.schedules[index].wednesday) daysArr.push('wednesday');
+    if (coffee.schedules[index].thursday) daysArr.push('thursday');
+    if (coffee.schedules[index].friday) daysArr.push('friday');
+    if (coffee.schedules[index].saturday) daysArr.push('saturday');
+
+    function formatAMPM (date) {
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return strTime;
+    }
+
+    console.log({
+      name: coffee.schedules[index].name,
+      days: daysArr,
+      time: formatAMPM(coffee.schedules[index].time)
+    });
   };
 
   // Remove a schedule instance
