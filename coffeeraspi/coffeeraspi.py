@@ -8,6 +8,7 @@ import websockets
 import datetime
 
 import teensy
+import state
 import messages
 
 def log(message):
@@ -44,9 +45,16 @@ async def contact_server(server, name, coffee_queue, reconnect=True):
 
 async def serial_consumer(serial_device_name, coffee_queue, mock=False):
     with teensy.Interface(serial_device_name, mock=mock) as interface:
+        # Build a default state that will record new information as it becomes
+        # available.
+        s = state.State(interface)
+        # Enforce the current state and hope for the best
+        s.enforce()
         while True:
             order = await coffee_queue.get()
             log('Preparing order {}'.format(order))
+
+            s.ready_mug()
 
 def main(args):
     loop = asyncio.get_event_loop()
