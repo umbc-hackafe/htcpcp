@@ -9,7 +9,7 @@ import websockets
 import teensy
 import messages
 
-async def contact_server():
+async def contact_server(server, name, coffee_queue):
     async with websockets.connect(server) as sock:
         await sock.send(json.dumps(dict(
             message='Hello',
@@ -21,9 +21,23 @@ async def contact_server():
         # Handle new response
         print(json.loads(resp))
 
+        # TODO: Actually get real orders...
+        coffee_queue.put_nowait(messages.DrinkOrder(8, {'sugar': 2}, 'coffee'))
 
-def main():
-    asyncio.get_event_loop().run_until_complete(contact_server())
+async def serial_consumer(serial_device_name, coffee_queue, mock=False):
+    with teensy.Interface(serial_device_name, mock=mock) as interface:
+        while True:
+            order = await coffee_queue.get()
+
+            # TODO: Process order...
+
+def main(args):
+    loop = asyncio.get_event_loop()
+    coffee_queue = asyncio.Queue(loop=loop)
+    loop.run_until_complete(asyncio.gather(
+        contact_server(args.server, args.name, coffee_queue),
+        serial_consumer(args.serial, coffee_queue, mock=args.mock)))
+    loop.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Client for connecting to AWS')
@@ -32,9 +46,9 @@ if __name__ == "__main__":
         '-n', '--name', default=socket.gethostname(),
         help='The name of this client coffee machine'
     )
+    parser.add_argument('-s', '--serial', default=None,
+            help='The serial device to use, or the first one detected')
+    parser.add_argument('-S', '--mock', action='store_true',
+            help='Mock the socket device instead of using a real one')
 
-    args = parser.parse_args()
-    server = args.server
-    name = args.name
-
-    main()
+    main(parser.parse_args())
