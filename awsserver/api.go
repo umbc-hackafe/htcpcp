@@ -309,7 +309,7 @@ func enqueueBrew(req *BrewRequest, w http.ResponseWriter) {
 	}
 
 	machine := Machine{}
-	db.First(&machine, req.Drink)
+	db.First(&machine, req.Machine)
 
 	if machine.ID == 0 {
 		log.Printf("Brew request: unknown machine %d\n", req.Machine)

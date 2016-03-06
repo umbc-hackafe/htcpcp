@@ -3,7 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Angular Material style sheet -->
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
   <link rel="stylesheet" href="index.css">
 </head>
 <body ng-app="coffee" ng-cloak>
@@ -23,17 +23,17 @@
           <div ng-repeat="coffeeInstance in coffee.coffees">
             <div layout="row" layout-align="center center">
               <md-input-container><label>Coffee Name</label><input type="text" ng-model="coffeeInstance.name"></md-input-container>
-              <md-input-container><label>Coffee Type</label><input type="text" ng-model="coffeeInstance.type"></md-input-container>
+              <md-input-container><label>Coffee Type</label><input type="text" ng-model="coffeeInstance.k_cup"></md-input-container>
             </div>
             <div layout="row" layout-align="center center">
-              <md-input-container><label>Amount Sugar</label><input type="text" ng-model="coffeeInstance.sugar"></md-input-container>
-              <md-input-container><label>Amount Creamer</label><input type="text" ng-model="coffeeInstance.creamer"></md-input-container>
+              <md-input-container><label>Amount Sugar</label><input type="number" ng-model="coffeeInstance.sugar"></md-input-container>
+              <md-input-container><label>Amount Creamer</label><input type="number" ng-model="coffeeInstance.creamer"></md-input-container>
             </div>
             <div layout="row" layout-align="center center">
-              <form class="save-button" ng-submit="coffee.saveCoffee($index)">
+              <form class="save-button" ng-submit="coffee.saveCoffee(coffeeInstance)">
                 <md-button class="md-raised md-primary" type="submit">Save</md-button>
               </form>
-              <form class="brew-button" ng-submit="coffee.brewCoffee($index)">
+              <form class="brew-button" ng-submit="coffee.brewCoffee(coffeeInstance)">
                 <md-button class="md-raised md-primary" type="submit">Brew Now</md-button>
               </form>
               <form class="delete-button" ng-submit="coffee.removeCoffee($index)">
@@ -58,8 +58,8 @@
               <md-input-container>
                 <label>Coffee Name</label>
                 <!-- Dynamically List all Coffee Instances -->
-                <md-select ng-model="scheduleInstance.coffee">
-                    <md-option ng-repeat="coffeeInstance in coffee.coffees" value="{{coffeeInstance.name}}">
+                <md-select ng-model="scheduleInstance.drink">
+                    <md-option ng-repeat="coffeeInstance in coffee.coffees" value="{{coffeeInstance.id}}">
                       {{coffeeInstance.name}}
                     </md-option>
                 </md-select>
@@ -81,7 +81,7 @@
             </div>
             <!-- Save and Delete Buttons -->
             <div layout="row" layout-align="center center">
-              <form class="save-button" ng-submit="coffee.saveSchedule($index)">
+              <form class="save-button" ng-submit="coffee.saveSchedule(scheduleInstance)">
                 <md-button class="md-raised md-primary" type="submit">Save</md-button>
               </form>
               <form class="delete-button" ng-submit="coffee.removeSchedule($index)">
@@ -99,12 +99,12 @@
     </div>
   </md-content>
   <!-- Angular Material requires Angular.js Libraries -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js"></script>
   <!-- Angular Material Library -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
   <!-- Your application bootstrap  -->
   <script src="index.js"></script>
 </body>
