@@ -81,7 +81,16 @@ async def serial_consumer(serial_device_name, coffee_queue, mock=False):
                         auth = ('admin','admin'))
                 return
 
+            # Swing the tray over to a ready cup.
             s.ready_mug()
+
+
+            # Load a k_cup if it's listed as an add_in.
+            if order.add_ins.get('k_cup', False):
+                s.ready_kcup()
+
+            # Brew
+            s.brew()
 
 def main(args):
     loop = asyncio.get_event_loop()
