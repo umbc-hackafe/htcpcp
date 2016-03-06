@@ -25,11 +25,15 @@ async def contact_server(server, name, coffee_queue, reconnect=True):
                 )))
 
             resp = await sock.recv()
-            # Handle new response
-            print(json.loads(resp))
+            log(json.loads(resp))
+            log('Connected with server {}'.format(server))
 
-            # TODO: Actually get real orders...
-            coffee_queue.put_nowait(messages.DrinkOrder(8, {'sugar': 2}, 'coffee'))
+            while True:
+                # Wait for orders.
+                order_msg = json.loads(await sock.recv())
+                order = messages.DrinkOrder.deserialize(order_msg)
+                coffee_queue.put_nowait(order)
+                log('Enqueued order {}'.format(order))
 
         log('Lost connection with server')
         if not reconnect:
