@@ -21,7 +21,7 @@ class Interface():
             devices_possible = sorted(serial.tools.list_ports.comports(),
                     key=lambda i: i.name)
             if len(devices_possible) > 0:
-                device = devices_possible[0]
+                device = devices_possible[0].device
         self.serial = serial.Serial() if not mock else SerialMock()
         self.serial.port = device
 
