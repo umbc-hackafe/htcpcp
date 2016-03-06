@@ -89,7 +89,7 @@ func createSchedule(w http.ResponseWriter, r *http.Request) {
 	db.First(&schedule, data.ID)
 	new := schedule.ID == 0
 
-	schedule.Name = data.Name[:100]
+	schedule.Name = data.Name
 	schedule.Days = days
 	schedule.Enabled = data.Enabled
 	schedule.Time = data.Time
@@ -175,12 +175,12 @@ func createDrink(w http.ResponseWriter, r *http.Request) {
 	db.First(&drink, data.ID)
 	new := drink.ID == 0
 
-	drink.Name = data.Name[:100]
+	drink.Name = data.Name
 	drink.Size = data.Size
 	drink.Sugar = data.Sugar
 	drink.Creamer = data.Creamer
-	drink.TeaBag = data.TeaBag[:100]
-	drink.KCup = data.KCup[:100]
+	drink.TeaBag = data.TeaBag
+	drink.KCup = data.KCup
 
 	db.Save(&drink)
 	if new {

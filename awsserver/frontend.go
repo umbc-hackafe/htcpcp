@@ -53,9 +53,30 @@ func main() {
 		m := Machine{Name: "Dummy"}
 		db.Create(&m)
 		log.Printf(
-			"Created dummy machine with id %d and name %s",
+			"Created dummy machine with id %d and name %s\n",
 			m.ID, m.Name)
 	}
+
+	b := Drink{
+		Name: "__bell__",
+		Sugar: 1,
+	}
+	db.Create(&b)
+	log.Printf("Created __bell__ drink with id %d\n", b.ID)
+
+	l1 := Drink{
+		Name: "__light__",
+		Sugar: 1,
+	}
+	db.Create(&l1)
+	log.Printf("Created __light__ (on) drink with id %d\n", l1.ID)
+
+	l2 := Drink{
+		Name: "__light__",
+		Sugar: 0,
+	}
+	db.Create(&l2)
+	log.Printf("Created __light__ (off) drink with id %d\n", l2.ID)
 
 	// Create the base router
 	rootRouter := http.NewServeMux()
@@ -77,8 +98,8 @@ func main() {
 	apiRouter.HandleFunc("/api/get/drinks", getDrinks)
 	apiRouter.HandleFunc("/api/get/machines", getMachines)
 
-	apiRouter.HandleFunc("/brew", brew)
-	apiRouter.HandleFunc("/brew/{device:[0-9]+}/{machine:[0-9]+}", brewPath)
+	apiRouter.HandleFunc("/api/brew", brew)
+	apiRouter.HandleFunc("/api/brew/{drink:[0-9]+}/{machine:[0-9]+}", brewPath)
 
 	rootRouter.Handle("/api/", apiRouter)
 
