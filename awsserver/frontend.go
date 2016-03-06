@@ -51,13 +51,26 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Got data: %s", data)
 
+    // Give our end of the handshake
 	data = make(map[string]interface{})
-	data["hi_there"] = "This is the server"
+    data["status"] = "successful"
 	err = conn.WriteJSON(data)
 	if err != nil {
-		log.Printf("Error decoding json: %v\n", err)
+		log.Printf("Error writing to connection: %v\n", err)
 		return
 	}
+
+	data = make(map[string]interface{})
+	data["mug_size"] = 8
+    data["add_ins"] = make(map[string]interface{})
+    data["name"] = "coffelattachino"
+	err = conn.WriteJSON(data)
+	if err != nil {
+		log.Printf("Error writing to connection: %v\n", err)
+		return
+	}
+
+    for {}
 }
 
 func main() {
