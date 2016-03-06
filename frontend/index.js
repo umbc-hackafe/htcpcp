@@ -1,5 +1,5 @@
 // Coffee front end angular module
-angular.module('coffee', ['ngMaterial']).controller('coffeeController', function () {
+angular.module('coffee', ['ngMaterial']).controller('coffeeController', function ($scope, $http) {
 
   // Coffee application
   var coffee = this;
@@ -41,6 +41,17 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
 
   // Add a schedule instance
   coffee.addSchedule = function () {
+    // Post request to create new coffee object
+    $http.post('/api/create/schedule', {
+      // Data object to send
+      foo: 'bar'
+    }).then(function () {
+      // TODO - Success
+      console.log('Success');
+    }, function () {
+      // TODO - FAILURE
+      console.log('Failure');
+    });
     // Push into coffees array
     coffee.schedules.push({
       // Coffee instance

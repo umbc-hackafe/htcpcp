@@ -54,10 +54,10 @@
               <md-input-container>
                 <label>Coffee Name</label>
                 <!-- Dynamically List all Coffee Instances -->
-                <md-select ng-model="scheduleInstance.coffee">
-                    <md-option ng-repeat="coffeeInstance in coffee.coffees" value="{{coffeeInstance.name}}">
-                      {{coffeeInstance.name}}
-                    </md-option>
+                <md-select ng-model="scheduleInstance.coffee" ng-options="coffeeInstance as coffeeInstance.name for coffeeInstance in coffee.coffees">
+                  <md-option ng-repeat="coffeeInstance in coffee.coffees" value="{{coffeeInstance.name}}">
+                    {{coffeeInstance.name}}
+                  </md-option>
                 </md-select>
               </md-input-container>
             </div>
