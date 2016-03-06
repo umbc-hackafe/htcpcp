@@ -26,8 +26,8 @@ def do_brew(drink, creams=0, sugar=0):
         "size": 6,
         "k_cup": "yes please" if drink == "coffee" else "",
         "tea_bag": "yes please" if drink == "tea" else "",
-        "sugar": int(sugar),
-        "creamer": int(creams),
+        "sugar": int(sugar) if sugar else 0,
+        "creamer": int(creams) if creams else 0,
     }
 
     if my_drink_id != -1:
