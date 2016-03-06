@@ -45,14 +45,14 @@ long serial_index = 0;
 
 int arglen[256] = {};
 
-#define TRAY_OPEN 0
-#define TRAY_CLOSED 1
+#define TRAY_OPEN 1
+#define TRAY_CLOSED 0
 
-#define LOADER_REST 0
-#define LOADER_ACTIVE 1
+#define LOADER_REST 1
+#define LOADER_ACTIVE 0
 
-#define EJECTOR_OFF 0
-#define EJECTOR_ON 1
+#define EJECTOR_OFF 1
+#define EJECTOR_ON 0
 
 int mug_index = 0;
 int tray_state = 2;
@@ -239,6 +239,12 @@ void initialize() {
   pinMode(PIN_KCUP_LOADER, OUTPUT);
   pinMode(PIN_KCUP_EJECTOR, OUTPUT);
   pinMode(PIN_TRAY_PISTON, OUTPUT);
+  pinMode(PIN_BREW_BUTTON, OUTPUT);
+
+  digitalWriteFast(PIN_KCUP_LOADER, LOADER_REST);
+  digitalWriteFast(PIN_KCUP_EJECTOR, EJECTOR_OFF);
+  digitalWriteFast(PIN_TRAY_PISTON, TRAY_CLOSED);
+  digitalWriteFast(PIN_BREW_BUTTON, 1);
 
   Serial.begin(9600);
 
