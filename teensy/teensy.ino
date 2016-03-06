@@ -25,7 +25,7 @@ enum Addin {
   SUGAR = 0,
   MILK,
   HONEY,
-}
+};
 
 char serial_buffer[BUFLEN] = {};
 long serial_index = 0;
@@ -44,15 +44,6 @@ long serial_index = 0;
 #define CMD_addin_insert 'i'
 
 int arglen[256] = {};
-arglen[CMD_mug_seek] = 1;
-arglen[CMD_mug_get] = 0;
-arglen[CMD_kcup_tray_open] = 0;
-arglen[CMD_kcup_tray_close] = 0;
-arglen[CMD_kcup_load] = 0;
-arglen[CMD_kcup_eject] = 0;
-arglen[CMD_kcup_count] = 0;
-arglen[CMD_brew] = 0;
-arglen[CMD_addin_insert] = 2;
 
 #define TRAY_OPEN 0
 #define TRAY_CLOSED 1
@@ -72,7 +63,7 @@ void send_data(int result) {
   Serial.write(result);
 }
 
-void handle_serial {
+void handle_serial() {
   if (Serial.available()) {
     int data = Serial.read();
     if (data == CMD_HEADER_A) {
@@ -113,7 +104,7 @@ void handle_serial {
 	break;
       case CMD_addin_insert:
 	// int, int
-	res = brew(serial_buffer[2], serial_buffer[3]);
+	res = addin_insert((enum Addin)serial_buffer[2], serial_buffer[3]);
 	break;
       default:
 	res = ERR_UNKNOWN;
@@ -157,7 +148,6 @@ int kcup_tray_open() {
     delay(500);
   }
   tray_state = TRAY_OPEN;
-  KCUP_LOADER, KCUP_EJECTOR, TRAY_PISTON
   return 0;
 }
 
@@ -165,7 +155,7 @@ int kcup_tray_open() {
 // Repeated calls will do nothing
 // Never returns an error, ideally
 int kcup_tray_close() {
-  digtalWriteFast(PIN_TRAY_PISTON, TRAY_CLOSED);
+  digitalWriteFast(PIN_TRAY_PISTON, TRAY_CLOSED);
   if (tray_state != TRAY_CLOSED) {
     delay(500);
   }
@@ -236,11 +226,11 @@ int addin_insert(enum Addin type, int amount) {
 }
 
 int kettle_set_temp(int temp) {
-
+  return ERR_NYI;
 }
 
 int kettle_dispense(int amount) {
-
+  return ERR_NYI;
 }
 
 void initialize() {
@@ -251,6 +241,16 @@ void initialize() {
   pinMode(PIN_TRAY_PISTON, OUTPUT);
 
   Serial.begin(9600);
+
+  arglen[CMD_mug_seek] = 1;
+  arglen[CMD_mug_get] = 0;
+  arglen[CMD_kcup_tray_open] = 0;
+  arglen[CMD_kcup_tray_close] = 0;
+  arglen[CMD_kcup_load] = 0;
+  arglen[CMD_kcup_eject] = 0;
+  arglen[CMD_kcup_count] = 0;
+  arglen[CMD_brew] = 0;
+  arglen[CMD_addin_insert] = 2;
 }
 
 int main() {
