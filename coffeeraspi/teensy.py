@@ -1,4 +1,4 @@
-import serial
+import serial, serial.tools.list_ports
 
 
 class Interface():
@@ -14,6 +14,14 @@ class Interface():
             'addin_insert':     b'i'
             }
     def __init__(self, device, mock=False):
+        """Open a serial interface and allow interfacing with the Teensy module
+        using it. If no device is given (None) it will use the first detected
+        serial device."""
+        if device == None:
+            devices_possible = sorted(serial.tools.list_ports.comports(),
+                    key=lambda i: i.name)
+            if len(devices_possible) > 0:
+                device = devices_possible[0]
         self.serial = serial.Serial() if not mock else SerialMock()
         self.serial.port = device
 
