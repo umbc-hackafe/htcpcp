@@ -1,0 +1,15 @@
+[Unit]
+Description=Download htcpcp from the internet
+Wants=network.target
+After=network.target
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/bin/sh -c "cd /opt/htcpcp && git pull origin master"
+RuntimeMaxSec=20s
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

@@ -2,9 +2,10 @@
 Description=Startup code for htcpcp
 Wants=network.target
 After=network.target
+Wants=htcpcp-get.service
 
 [Service]
-ExecStart=/bin/sh -c "cd /opt/htcpcp; git pull; ./coffeeraspi.py breakfasti.me"
+ExecStart=/bin/sh -c "cd /opt/htcpcp/coffeeraspi && ./coffeeraspi.py breakfasti.me"
 
 [Install]
 WantedBy=default.target
