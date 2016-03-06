@@ -8,6 +8,7 @@
 #define PIN_KCUP_LOADER 2
 #define PIN_KCUP_EJECTOR 11
 #define PIN_TRAY_PISTON 12
+#define PIN_BREW_BUTTON 6
 
 const int ERR_UNKNOWN = -1;
 const int ERR_NYI = -2;
@@ -25,7 +26,7 @@ const int ERR_ALREADY_BREWING = -31;
 const int ERR_MUG_INVALID = -41;
 
 enum Addin {
-  SUGAR,
+  SUGAR = 0,
   MILK,
   HONEY,
 }
@@ -57,8 +58,22 @@ arglen[CMD_kcup_count] = 0;
 arglen[CMD_brew] = 0;
 arglen[CMD_addin_insert] = 2;
 
-void send_data(int result) {
+#define TRAY_OPEN 0
+#define TRAY_CLOSED 1
 
+#define LOADER_REST 0
+#define LOADER_ACTIVE 1
+
+#define EJECTOR_OFF 0
+#define EJECTOR_ON 1
+
+int mug_index = 0;
+int tray_state = 2;
+int ejector_state = 2;
+int kcup_loaded = 1;
+
+void send_data(int result) {
+  Serial.write(result);
 }
 
 void handle_serial {
@@ -114,38 +129,72 @@ void handle_serial {
   }
 }
 
+#define MUG_ANGLE_MIN 0
+#define MUG_ANGLE_MAX 255
+#define MUG_INDEX_MIN 0
+#define MUG_INDEX_MAX 5
+
 // Tell the turntable to seek to a particular mug
-// Error if !(0 <= index <= 3)
+// Error if !(0 <= index <= 5)
 int mug_seek(int index) {
-  return ERR_NYI;
+  if (index < MUG_INDEX_MIN || index > MUG_INDEX_MAX)
+    return ERR_MUG_INVALID;
+
+  int angle = (MUG_ANGLE_MAX - MUG_ANGLE_MIN) / (MUG_INDEX_MAX - MUG_INDEX_MIN) * (index - MUG_INDEX_MIN) + MUG_ANGLE_MIN;
+  analogWrite(PIN_TURNTABLE_SERVO, angle);
+  mug_index = index;
+  return 0;
 }
 
 // Gets the current selected mug index, or the one that is currently being seeked
 // Never returns an error
 int mug_get() {
-  return ERR_NYI;
+  return mug_index;
 }
 
 // Ensure the kcup tray is open
 // Repeated calls will do nothing
 // Never returns an error, ideally
 int kcup_tray_open() {
-  return ERR_NYI;
+  digitalWriteFast(PIN_TRAY_PISTON, TRAY_OPEN);
+  if (tray_state != TRAY_OPEN) {
+    delay(500);
+  }
+  tray_state = TRAY_OPEN;
+  KCUP_LOADER, KCUP_EJECTOR, TRAY_PISTON
+  return 0;
 }
 
 // Ensure the kcup tray is closed
 // Repeated calls will do nothing
 // Never returns an error, ideally
 int kcup_tray_close() {
-  return ERR_NYI;
+  digtalWriteFast(PIN_TRAY_PISTON, TRAY_CLOSED);
+  if (tray_state != TRAY_CLOSED) {
+    delay(500);
+  }
+  tray_state = TRAY_CLOSED;
+  return 0;
 }
 
 // Loads a kcup from the dispenser
 // ERR_KCUP_TRAY_FULL if there is already a kcup loaded
 // Opens the tray if it is closed
 int kcup_load() {
+  if (kcup_loaded) {
+    return ERR_KCUP_TRAY_FULL;
+  }
+
   kcup_tray_open();
-  return ERR_NYI;
+
+  digitalWriteFast(PIN_KCUP_LOADER, LOADER_ACTIVE);
+  delay(500);
+  digitalWriteFast(PIN_KCUP_LOADER, LOADER_REST);
+  delay(500);
+
+  kcup_loaded = 1;
+
+  return 0;
 }
 
 // Ejects a kcup from the dispenser
@@ -153,22 +202,35 @@ int kcup_load() {
 // Never returns an error
 int kcup_eject() {
   kcup_tray_open();
-  return ERR_NYI;
+
+  kcup_loaded = 0;
+
+  digitalWriteFast(PIN_KCUP_EJECTOR, EJECTOR_ON);
+  delay(100);
+  digitalWriteFast(PIN_KCUP_EJECTOR, EJECTOR_OFF);
+  delay(250);
+
+  return 0;
 }
 
 // Returns the number of kcups loaded
 // If exact numbers are not available, returns 1 if kcups are
 // available and 0 if no kcups are available
 int kcup_count() {
-  return ERR_NYI;
+  return 1;
 }
 
 // Begins a brew cycle
-// ERR_KCUP_TRAY_EMPTY if no kcup is loaded
-// ERR_COFFEE_DRY if water reservoir is empty
-// ERR_ALREADY_BREWING if a brew is already in progress
+// ERR_COFFEE_DRY if water reservoir is empty (not yet)
+// ERR_ALREADY_BREWING if a brew is already in progress (not yet)
 int brew() {
-  return ERR_NYI;
+  if (!kcup_loaded) kcup_load();
+
+  digitalWriteFast(PIN_BREW_BUTTON, 1);
+  delay(100);
+  digitalWriteFast(PIN_BREW_BUTTON, 0);
+
+  return 0;
 }
 
 // Dispenses an addin to the current mug
@@ -185,8 +247,18 @@ int kettle_dispense(int amount) {
 
 }
 
-int main() {
+void initialize() {
+  analogWriteResolution(8);
+  pinMode(PIN_TURNTABLE_SERVO, OUTPUT);
+  pinMode(PIN_KCUP_LOADER, OUTPUT);
+  pinMode(PIN_KCUP_EJECTOR, OUTPUT);
+  pinMode(PIN_TRAY_PISTON, OUTPUT);
+
   Serial.begin(9600);
+}
+
+int main() {
+  initialize();
 
   while (1) {
     handle_serial();
