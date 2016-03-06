@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 
@@ -24,17 +25,23 @@ var (
 	sqlDriver = flag.String("sql-driver", "sqlite3", "Sql driver to use")
 )
 
-var upgrader = websocket.Upgrader{}
+var (
+	upgrader = websocket.Upgrader{}
+	db       gorm.DB
+)
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
+	// Upgrade the http connection to a websocket
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("Unable to upgrade connection: %v\n", err)
 		http.Error(w, "Connection failed.", http.StatusInternalServerError)
 		return
 	}
+	// If successful, set to close after returning
 	defer conn.Close()
 
+	// Test Code
 	data := make(map[string]interface{})
 	err = conn.ReadJSON(&data)
 	if err != nil {
@@ -56,19 +63,34 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 
-	db, err := gorm.Open(*sqlDriver, *sqlConnectionString)
+	// Open the database connection
+	var err error
+	db, err = gorm.Open(*sqlDriver, *sqlConnectionString)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// Migration stuff could be a utility I guess.
+	// Run migrate to make sure the tables exist
 	db.AutoMigrate(&Schedule{})
 	db.AutoMigrate(&Drink{})
+	db.AutoMigrate(&Machine{})
 
+	// Create the base router
 	rootRouter := http.NewServeMux()
+	// Serve the static files (js, html, css)
 	rootRouter.Handle("/", http.FileServer(http.Dir(*staticFilesPath)))
+	// Handle the websocket connections
 	rootRouter.HandleFunc("/ws", wsHandler)
 
+	// Sub-router for the REST api
+	apiRouter := mux.NewRouter()
+	apiRouter.Methods("POST").
+		Path("/create/schedule").
+		HandlerFunc(createSchedule)
+
+	rootRouter.Handle("/api/", apiRouter)
+
+	// Start the server
 	log.Printf("Starting on %s\n", *address)
 	log.Fatalln(http.ListenAndServe(*address, rootRouter))
 }
