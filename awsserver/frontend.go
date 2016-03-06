@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -32,6 +33,9 @@ var (
 var (
 	upgrader = websocket.Upgrader{}
 	db       gorm.DB
+
+	activeBackendMap     = make(map[uint]chan<- *Drink)
+	activeBackendMapLock = sync.RWMutex{}
 )
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,9 +59,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Got data: %s", data)
 
-    // Give our end of the handshake
+	// Give our end of the handshake
 	data = make(map[string]interface{})
-    data["status"] = "successful"
+	data["status"] = "successful"
 	err = conn.WriteJSON(data)
 	if err != nil {
 		log.Printf("Error writing to connection: %v\n", err)
@@ -66,15 +70,16 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	data = make(map[string]interface{})
 	data["mug_size"] = 8
-    data["add_ins"] = make(map[string]interface{})
-    data["name"] = "coffelattachino"
+	data["add_ins"] = make(map[string]interface{})
+	data["name"] = "coffelattachino"
 	err = conn.WriteJSON(data)
 	if err != nil {
 		log.Printf("Error writing to connection: %v\n", err)
 		return
 	}
 
-    for {}
+	for {
+	}
 }
 
 func main() {
@@ -119,6 +124,9 @@ func main() {
 	apiRouter.HandleFunc("/api/get/schedules", getSchedules)
 	apiRouter.HandleFunc("/api/get/drinks", getDrinks)
 	apiRouter.HandleFunc("/api/get/machines", getMachines)
+
+	apiRouter.HandleFunc("/brew", brew)
+	apiRouter.HandleFunc("/brew/{device:[0-9]+}/{machine:[0-9]+}", brewPath)
 
 	rootRouter.Handle("/api/", apiRouter)
 

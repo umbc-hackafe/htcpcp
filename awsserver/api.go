@@ -7,7 +7,10 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 var maximumRequestSize = flag.Int(
@@ -250,4 +253,85 @@ func getMachines(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	log.Printf("Got %d machines.\n", len(machines))
+}
+
+type BrewRequest struct {
+	Drink   uint `json:"drink"`
+	Machine uint `json:"machine"`
+}
+
+func brew(w http.ResponseWriter, r *http.Request) {
+	d := json.NewDecoder(io.LimitReader(r.Body, int64(*maximumRequestSize)))
+
+	req := BrewRequest{}
+
+	err := d.Decode(&req)
+	if err != nil {
+		log.Printf("Error decoding request: %v\n", err)
+		http.Error(w, "Unable to decode request", http.StatusBadRequest)
+		return
+	}
+
+	enqueueBrew(&req, w)
+}
+
+func brewPath(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	drink, err := strconv.ParseUint(vars["drink"], 10, 64)
+	if err != nil {
+		log.Panicf(
+			"Illegal string-integer converstion of vars[\"drink\"] = %s.\n",
+			vars["drink"])
+	}
+
+	machine, err := strconv.ParseUint(vars["machine"], 10, 64)
+	if err != nil {
+		log.Panicf(
+			"Illegal string-integer converstion of vars[\"machine\"] = %s.\n",
+			vars["machine"])
+	}
+
+	enqueueBrew(&BrewRequest{
+		Drink:   uint(drink),
+		Machine: uint(machine),
+	}, w)
+}
+
+func enqueueBrew(req *BrewRequest, w http.ResponseWriter) {
+	drink := Drink{}
+	db.First(&drink, req.Drink)
+
+	if drink.ID == 0 {
+		log.Printf("Brew request: unknown drink %d\n", req.Drink)
+		http.Error(
+			w, fmt.Sprintf("Drink %d not found.", req.Drink), http.StatusBadRequest)
+		return
+	}
+
+	machine := Machine{}
+	db.First(&machine, req.Drink)
+
+	if machine.ID == 0 {
+		log.Printf("Brew request: unknown machine %d\n", req.Machine)
+		http.Error(
+			w, fmt.Sprintf("Machine %d not found.", req.Machine), http.StatusBadRequest)
+		return
+	}
+
+	activeBackendMapLock.RLock()
+	backend, ok := activeBackendMap[machine.ID]
+	activeBackendMapLock.RUnlock()
+
+	if !ok {
+		log.Printf(
+			"Ignoring a request to make drink %d (name: %s) on machine %d (name: %s) "+
+				"because machine %d is not available.\n",
+			drink.ID, drink.Name, machine.ID, machine.Name, machine.ID)
+		return
+	}
+	backend <- &drink
+	log.Printf(
+		"Enqueued a request to make drink %d (name: %s) on machine %d "+
+			"(name: %s).\n",
+		drink.ID, drink.Name, machine.ID, machine.Name)
 }
