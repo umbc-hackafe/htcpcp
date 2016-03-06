@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 #ExecStartPre=/bin/sh -c "cd /opt/htcpcp; git pull"
-ExecStart=/opt/htcpcp/awsserver/awsserver -address=:80
+ExecStart=/opt/htcpcp/awsserver/awsserver -address=:80 -static-files-path=/opt/htcpcp/frontend/
 
 [Install]
 WantedBy=default.target
