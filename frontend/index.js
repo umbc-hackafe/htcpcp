@@ -33,19 +33,18 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
     var index = coffee.coffees.length - 1;
 
     // Post request to create new coffee object
-    $http.post('/api/create/coffee', {
+    $http.post('/api/update/drink', {
       // Empty name
       name: '',
       // Empty days
       type: '',
       // Size
-      size: '',
-      // Kcup
-      k_cup: '',
-      // Empty time
-      sugar: '',
-      // 0 for drink id
-      creamer: '',
+      size: 6,
+      // Kcup string for yes, empty string for no.
+      k_cup: 'yes',
+      // Empty intial sugar and creamer.
+      sugar: 0,
+      creamer: 0,
     }).then(function (response) { // Success callback
       // Set the coffee item id
       coffee.schedules[index].id = response.data.id;
@@ -97,7 +96,7 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
     var index = coffee.schedules.length - 1;
 
     // Post request to create new coffee object
-    $http.post('/api/create/schedule', {
+    $http.post('/api/update/schedule', {
       // Empty name
       name: '',
       // Empty days
@@ -137,7 +136,7 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
     if (coffee.schedules[index].saturday) daysArr.push('saturday');
 
     // Post request to create new coffee object
-    $http.post('/api/create/schedule', {
+    $http.post('/api/update/schedule', {
       // ID given to specify update and not create
       id: coffee.schedules[index].id,
       // Empty name
