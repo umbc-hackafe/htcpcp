@@ -1,18 +1,6 @@
 import serial, serial.tools.list_ports
 
-
 class Interface():
-    _func_map = {
-            'mug_seek':         b'a',
-            'mug_get':          b'b',
-            'kcup_tray_open':   b'c',
-            'kcup_tray_close':  b'd',
-            'kcup_load':        b'e',
-            'kcup_eject':       b'f',
-            'kcup_count':       b'g',
-            'brew':             b'h',
-            'addin_insert':     b'i'
-            }
     def __init__(self, device, mock=False):
         """Open a serial interface and allow interfacing with the Teensy module
         using it. If no device is given (None) it will use the first detected
@@ -35,26 +23,47 @@ class Interface():
     def open(self):
         self.serial.open()
 
-        # Generate functions from the _func_map
-        for name, letter in self._func_map.items():
-            # Construct a function matching this call
-            def call_serial(*args):
-                # Any arguments that are not bytes or lists will be coerced used
-                # bytes([arg])
-                self.serial.write(bytes([0xCA, 0xFE]))
-                self.serial.write(letter)
-                for arg in args:
-                    if type(arg) != bytes and type(args) != list:
-                        arg = bytes([arg])
-                    self.serial.write(arg)
-
-                return self.serial.read()
-
-            # Set the new function so it is accessible as interface.call
-            setattr(self, name, call_serial)
-
     def close(self):
         self.serial.close()
+
+    def firmware_call(self, letter, *args):
+        # Any arguments that are not bytes or lists will be coerced used
+        # bytes([arg])
+        self.serial.write(bytes([0xCA, 0xFE]))
+        self.serial.write(letter)
+        for arg in args:
+            if type(arg) != bytes and type(args) != list:
+                arg = bytes([arg])
+                self.serial.write(arg)
+
+        return self.serial.read()
+
+    def mug_seek(self, index):
+        self.firmware_call(b'a', index)
+
+    def mug_get(self):
+        self.firmware_call(b'b')
+
+    def kcup_tray_open(self):
+        self.firmware_call(b'c')
+
+    def kcup_tray_close(self):
+        self.firmware_call(b'd')
+
+    def kcup_load(self):
+        self.firmware_call(b'e')
+
+    def kcup_eject(self):
+        self.firmware_call(b'f')
+
+    def kcup_count(self):
+        self.firmware_call(b'g')
+
+    def brew(self):
+        self.firmware_call(b'h')
+
+    def addin_insert(self):
+        self.frimware_call(b'i')
 
 class SerialMock():
     def __init__(self, port = None, *args, **kwargs):
