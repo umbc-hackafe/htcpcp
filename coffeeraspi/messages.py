@@ -9,3 +9,6 @@ class DrinkOrder():
         return DrinkOrder(data['mug_size'],
                 data['add_ins'],
                 data.get('name', None))
+
+    def __str__(self):
+        return 'DrinkOrder("{}")'.format(self.name if self.name else '')
