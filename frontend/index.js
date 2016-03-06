@@ -12,6 +12,7 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
 
   // Add a new coffee instance
   coffee.addCoffee = function () {
+
     // Push into coffees array
     coffee.coffees.push({
       // Name of coffee
@@ -23,6 +24,37 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       // Globs of creamer
       creamer: ''
     });
+
+    /**
+    * NOTE - Create Schedule
+    */
+
+    // New index for coffee instance is last index
+    var index = coffee.coffees.length - 1;
+
+    // Post request to create new coffee object
+    $http.post('/api/create/coffee', {
+      // Empty name
+      name: '',
+      // Empty days
+      type: '',
+      // Size
+      size: '',
+      // Kcup
+      k_cup: '',
+      // Empty time
+      sugar: '',
+      // 0 for drink id
+      creamer: '',
+    }).then(function (response) { // Success callback
+      // Set the coffee item id
+      coffee.schedules[index].id = response.data.id;
+    }, function (response) { // Failure callback
+      // TODO - YOU FAILED, time to debug
+      console.log('FAILURE')
+      console.log(response);
+    });
+
   };
 
   // Save a coffee instance
@@ -57,21 +89,32 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
       saturday: false
     });
 
+    /**
+    * NOTE - Create Schedule
+    */
+
+    // New index for schedule instance is last index
     var index = coffee.schedules.length - 1;
 
     // Post request to create new coffee object
     $http.post('/api/create/schedule', {
+      // Empty name
       name: '',
+      // Empty days
       days: [],
+      // Empty time
       time: '',
+      // 0 for drink id
       drink: 0,
+      // 0 for machine id
       machine: 0,
-    }).then(function () {
-      // TODO - Success
-      console.log('Success');
-    }, function () {
-      // TODO - FAILURE
-      console.log('Failure');
+    }).then(function (response) { // Success callback
+      // Set the coffee item id
+      coffee.schedules[index].id = response.data.id;
+    }, function (response) { // Failure callback
+      // TODO - YOU FAILED, time to debug
+      console.log('FAILURE')
+      console.log(response);
     });
 
   };
@@ -79,6 +122,11 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
   // Save a schedule instance
   coffee.saveSchedule = function (index) {
 
+    /**
+    * NOTE - Update Schedule
+    */
+
+    // Initialize days array
     var daysArr = [];
     if (coffee.schedules[index].sunday) daysArr.push('sunday');
     if (coffee.schedules[index].monday) daysArr.push('monday');
@@ -88,21 +136,27 @@ angular.module('coffee', ['ngMaterial']).controller('coffeeController', function
     if (coffee.schedules[index].friday) daysArr.push('friday');
     if (coffee.schedules[index].saturday) daysArr.push('saturday');
 
-    function formatAMPM (date) {
-      var hours = date.getHours();
-      var minutes = date.getMinutes();
-      var ampm = hours >= 12 ? 'pm' : 'am';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0'+minutes : minutes;
-      var strTime = hours + ':' + minutes + ' ' + ampm;
-      return strTime;
-    }
-
-    console.log({
+    // Post request to create new coffee object
+    $http.post('/api/create/schedule', {
+      // ID given to specify update and not create
+      id: coffee.schedules[index].id,
+      // Empty name
       name: coffee.schedules[index].name,
+      // Empty days
       days: daysArr,
-      time: Math.floor(coffee.schedules[index].time.getTime() / 1000)
+      // Empty time
+      time: Math.floor(coffee.schedules[index].time.getTime() / 1000),
+      // 0 for drink id
+      drink: 0,
+      // 0 for machine id
+      machine: 0,
+    }).then(function (response) { // Success callback
+      // Set the coffee item id
+      coffee.schedules[index].id = response.data.id;
+    }, function (response) { // Failure callback
+      // TODO - YOU FAILED, time to debug
+      console.log('FAILURE')
+      console.log(response);
     });
   };
 
