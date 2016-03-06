@@ -1,7 +1,3 @@
-#include "teensy3/WProgram.h"
-#include "teensy3/core_pins.h"
-#include "teensy3/usb_serial.h"
-
 #define BUFLEN 16
 
 #define PIN_TURNTABLE_SERVO 3
