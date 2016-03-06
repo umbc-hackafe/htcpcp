@@ -5,24 +5,35 @@ import asyncio
 import json
 import socket
 import websockets
+import datetime
 
 import teensy
 import messages
 
-async def contact_server(server, name, coffee_queue):
-    async with websockets.connect(server) as sock:
-        await sock.send(json.dumps(dict(
-            message='Hello',
-            name=name,
-            id=None, # In theory we would provide a unique ID for each machine, but we only have one...
-        )))
+def log(message):
+    print('{}: {}'.format(
+        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        message))
 
-        resp = await sock.recv()
-        # Handle new response
-        print(json.loads(resp))
+async def contact_server(server, name, coffee_queue, reconnect=True):
+    while True:
+        async with websockets.connect(server) as sock:
+            await sock.send(json.dumps(dict(
+                message='Hello',
+                name=name,
+                id=None, # In theory we would provide a unique ID for each machine, but we only have one...
+                )))
 
-        # TODO: Actually get real orders...
-        coffee_queue.put_nowait(messages.DrinkOrder(8, {'sugar': 2}, 'coffee'))
+            resp = await sock.recv()
+            # Handle new response
+            print(json.loads(resp))
+
+            # TODO: Actually get real orders...
+            coffee_queue.put_nowait(messages.DrinkOrder(8, {'sugar': 2}, 'coffee'))
+
+        log('Lost connection with server')
+        if not reconnect:
+            return
 
 async def serial_consumer(serial_device_name, coffee_queue, mock=False):
     with teensy.Interface(serial_device_name, mock=mock) as interface:
